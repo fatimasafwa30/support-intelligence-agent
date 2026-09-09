@@ -1,0 +1,38 @@
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Virtual environments and environment variables
+.venv/
+venv/
+env/
+.env
+.env.*
+!.env.example
+
+# Build and packaging artifacts
+build/
+dist/
+*.egg-info/
+
+# Data and generated project artifacts
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+data/golden/*
+!data/golden/.gitkeep
+reports/*
+!reports/.gitkeep
+
+# Notebook checkpoints and editor files
+.ipynb_checkpoints/
+.vscode/
+.idea/
