@@ -36,3 +36,8 @@ reports/*
 .ipynb_checkpoints/
 .vscode/
 .idea/
+
+!data/golden/
+!data/golden/*.csv
+!data/golden/*.md
+!data/golden/*.json

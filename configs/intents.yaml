@@ -1,0 +1,225 @@
+taxonomy_version: "1.0.0"
+single_label_policy: >-
+  Assign exactly one primary intent: the customer's main actionable support problem,
+  not the first keyword or every issue mentioned.
+multi_intent_policy: >-
+  When a message mentions multiple issues, choose the issue that most directly drives
+  the requested resolution. If no primary issue is reliable, assign other_unclear.
+other_unclear_definition: >-
+  Use for insufficient context, generic complaints, greetings, unsupported requests,
+  or ambiguous messages where no single primary intent can be determined reliably.
+provenance: >-
+  This taxonomy is derived from exploratory analysis of AppleSupport conversations and
+  will be validated against a manually labelled Golden Set later. It is not a claim that
+  the exploratory keyword rules were ground-truth labels.
+
+intents:
+  apple_id_account:
+    description: Apple ID access, sign-in, disabled/locked account, password, verification, or account-recovery issues.
+    include_when:
+      - The fundamental problem is authentication, account access, account recovery, or an Apple ID being disabled or locked.
+      - A customer cannot receive a verification code or complete a sign-in because of account access.
+    exclude_when:
+      - iCloud is mentioned only as a service affected by an Apple ID sign-in problem; keep this intent.
+      - The primary concern is a hacking, unauthorized-access, or privacy incident; use security_privacy.
+    examples:
+      - "My phone says my Apple ID has been disabled. How do I fix this?"
+      - "The page to reset your Apple ID is not working."
+    priority_notes: Prefer over icloud and security_privacy when authentication or account recovery is the primary actionable issue.
+    risk_level: high
+
+  icloud:
+    description: iCloud storage, backup, synchronization, photos, or data availability issues.
+    include_when:
+      - The customer reports missing, unsynced, unavailable, or full iCloud data or storage.
+      - The request concerns iCloud backup, shared storage, photos, or purchased storage not reflecting.
+    exclude_when:
+      - The customer cannot access iCloud because an Apple ID is locked or sign-in fails; use apple_id_account.
+      - A security incident is the primary concern; use security_privacy.
+    examples:
+      - "I purchased extra storage but it's not reflecting. Can you help?"
+      - "Is family shared iCloud storage a functionality I can't find?"
+    priority_notes: Mentioning iCloud alone is not sufficient; the service, storage, sync, or data problem must be primary.
+    risk_level: medium
+
+  software_update:
+    description: iOS, macOS, or other Apple software update, installation, upgrade, restore, or version-specific failures.
+    include_when:
+      - An update cannot install, restore, complete, or causes an update-specific error.
+      - The request is primarily about updating, upgrading, or a new software version.
+    exclude_when:
+      - The update is background context and the actionable issue is battery drain; use battery_power.
+      - The actionable issue is an app download or App Store acquisition problem; use app_store.
+    examples:
+      - "My iPhone won't install the latest iOS."
+      - "My iPhone will not update or restore. I get a 4013 error."
+    priority_notes: The exploratory report frequently paired update language with battery and hardware complaints; classify the downstream problem when it is clearer.
+    risk_level: medium
+
+  battery_power:
+    description: Battery drain, charging, charger, power, shutdown, or device-will-not-turn-on issues when power is central.
+    include_when:
+      - The customer reports rapid battery loss, charging failure, unexpected shutdown, or a device that will not power on.
+      - The customer asks whether charging behavior is safe or is damaging the device.
+    exclude_when:
+      - A payment or billing charge is involved; use billing_payments.
+      - A software update is the requested fix and no distinct power symptom is reported; use software_update.
+    examples:
+      - "Ever since the last update, my battery has been running down pretty fast."
+      - "Now it won't charge and won't turn on."
+    priority_notes: The word "charge" caused billing false positives in exploration; distinguish electrical charging from monetary charges.
+    risk_level: medium
+
+  connectivity:
+    description: Wi-Fi, Bluetooth, cellular/mobile-data, network, pairing, or connection failures.
+    include_when:
+      - The primary symptom is inability to connect, pair, use Wi-Fi, Bluetooth, cellular data, or a network service.
+      - An Apple service fails specifically because it cannot connect.
+    exclude_when:
+      - The primary issue is App Store downloading or obtaining an app; use app_store.
+      - The message is about Apple ID sign-in rather than network access; use apple_id_account.
+    examples:
+      - "The App Store just says that it cannot connect."
+      - "Toggle from airplane mode turns on WiFi and Bluetooth."
+    priority_notes: Connection language can appear inside other issues; require a network, pairing, or transport symptom to be primary.
+    risk_level: medium
+
+  device_hardware:
+    description: Physical device-function problems involving screen, camera, speaker, microphone, buttons, or other hardware behavior.
+    include_when:
+      - The customer reports a malfunctioning physical component or device behavior, such as a camera stopping or a distorted screen.
+      - The request seeks diagnosis of the hardware symptom rather than a repair process.
+    exclude_when:
+      - The customer asks for repair, replacement, warranty handling, Genius Bar, or an appointment; use repair_service.
+      - The core symptom is battery, charging, or power; use battery_power.
+    examples:
+      - "My iPad screen, no cracks or anything, was like this when I turned it on."
+      - "My camera decided to stop working."
+    priority_notes: A report that a device is broken remains hardware unless the customer is primarily requesting service or replacement.
+    risk_level: medium
+
+  app_store:
+    description: App Store, app installation, download, acquisition, or app-purchase problems.
+    include_when:
+      - The customer cannot obtain, download, install, update, or purchase an app through the App Store.
+      - The App Store itself is the named product or error context.
+    exclude_when:
+      - The word "app" is incidental to a hardware, camera, account, or unrelated issue.
+      - Media-library or iTunes content is primary; use subscriptions_media.
+    examples:
+      - "My account when download the app from my iPhone or Macbook [is] very slow."
+      - "This message came up when using MyFitnessPal app. I didn't click install."
+    priority_notes: Do not route every message containing "app" here; require an acquisition, installation, download, or App Store problem.
+    risk_level: medium
+
+  billing_payments:
+    description: Monetary charges, refunds, payment methods, billing, purchase-payment failures, or rejected payments.
+    include_when:
+      - The customer reports a charge, refund, payment method, billing issue, or payment rejection.
+      - The requested resolution concerns money, a transaction, or a payment instrument.
+    exclude_when:
+      - "Charge, charging, or charger refers to electrical power; use battery_power."
+      - The primary issue is subscription/media access rather than payment handling; use subscriptions_media.
+    examples:
+      - "My payment method keeps being rejected. It worked perfectly fine a week ago."
+      - "I need a refund for a charge."
+    priority_notes: Monetary meaning is required. The exploratory report showed electrical-charging messages as a frequent false-positive source.
+    risk_level: high
+
+  subscriptions_media:
+    description: Apple Music, iTunes, media libraries, audiobooks, subscriptions, or media-service access problems.
+    include_when:
+      - The primary issue concerns Apple Music, iTunes, a media library, purchased media, audiobooks, or a subscription service.
+      - The customer needs help accessing, organizing, canceling, or restoring media-service content.
+    exclude_when:
+      - A password or Apple ID access problem is primary; use apple_id_account.
+      - The concern is an App Store app download rather than media content; use app_store.
+    examples:
+      - "How can I access audiobooks not purchased on iTunes but in my iTunes library?"
+      - "Songs I previously downloaded don't appear in my library anymore."
+    priority_notes: iTunes references can occur in account, activation, or device contexts; use this intent only when media/service access is central.
+    risk_level: medium
+
+  setup_activation:
+    description: Initial device setup, activation, activation-server, or first-time configuration problems.
+    include_when:
+      - The customer cannot activate or initially set up a new or reset device.
+      - The customer reports an activation-server error or setup-stage failure.
+    exclude_when:
+      - The device is already in normal use and the primary issue is account access, software update, or hardware failure.
+      - A generic configuration question has no activation or setup-stage problem; use how_to_information when appropriate.
+    examples:
+      - "Your iPhone could not be activated because the activation server cannot be reached."
+      - "My iPhone 7 keeps respringing when trying to set up for the first time."
+    priority_notes: '"New phone" alone is not enough; activation or initial-setup context must be explicit.'
+    risk_level: medium
+
+  repair_service:
+    description: Repair, replacement, warranty, Genius Bar, service appointment, or Apple Store service requests.
+    include_when:
+      - The customer requests a repair, replacement, warranty outcome, service appointment, or Genius Bar help.
+      - The customer is disputing replacement handling or repair pricing.
+    exclude_when:
+      - The customer only describes a broken screen, camera, speaker, or device without requesting service; use device_hardware.
+      - The message concerns product ordering or shipment rather than repair service; use orders_delivery.
+    examples:
+      - "How do I make a Genius Bar appointment? The webpage is 403 forbidden."
+      - "£226 for replacement screen on a £399 watch — are you for real?"
+    priority_notes: Prefer this intent when service is the requested outcome, even if a hardware symptom is also described.
+    risk_level: high
+
+  security_privacy:
+    description: Hacking, unauthorized access, privacy/security incidents, or lost-device security concerns.
+    include_when:
+      - The customer reports being hacked, unauthorized use or access, privacy exposure, or a lost-device security incident.
+      - The customer describes an active security threat beyond routine account recovery.
+    exclude_when:
+      - The issue is ordinary Apple ID login, password reset, disabled account, or recovery; use apple_id_account.
+      - The message only mentions a security question without evidence of a security incident; use apple_id_account.
+    examples:
+      - "Someone hacked my iPhone and used Find My iPhone to get my location on all my devices."
+      - "I can't change my security question and can't log in to my account."
+    priority_notes: Treat hacking or unauthorized-access reports as urgent. Ordinary authentication belongs to apple_id_account.
+    risk_level: critical
+
+  orders_delivery:
+    description: Apple product orders, shipment, delivery, tracking, or fulfillment issues.
+    include_when:
+      - The customer asks about an Apple product order, shipment, delivery, tracking, order queue, or fulfillment.
+      - Delivery of a purchased Apple device is the primary support need.
+    exclude_when:
+      - '"Order" means device failure, an app command, or an unrelated phrase rather than a purchase or shipment.'
+      - An undelivered message is an iMessage/connectivity problem rather than a product shipment; use connectivity.
+    examples:
+      - "Due to delivery problems from EE of Apple Watch, would a watch purchased in the USA work in the UK?"
+      - "Store says I need a replacement but I go to the back of the order queue."
+    priority_notes: Require product-order or shipment context; exploratory matches included false positives for device condition and message delivery.
+    risk_level: high
+
+  how_to_information:
+    description: Genuine instructional or general-information requests with no more specific support problem.
+    include_when:
+      - The customer asks how to use a feature, access content, or perform a normal task without reporting a fault.
+      - The message is an informational request and no technical, account, billing, or service issue is primary.
+    exclude_when:
+      - A troubleshooting question starts with "how do I" but reports a distinct fault; use the specific fault intent.
+      - The customer asks how to obtain repair service; use repair_service.
+    examples:
+      - "How can I sort the songs in a playlist by artist or song title?"
+      - "How do I delete apps if this is what shows when I press and hold an app?"
+    priority_notes: Question form is not enough. This is the fallback for genuine information requests, not troubleshooting.
+    risk_level: low
+
+  other_unclear:
+    description: Insufficient-context, vague, ambiguous, generic, greeting-only, unsupported, or non-actionable customer messages.
+    include_when:
+      - No single primary actionable issue can be identified reliably.
+      - The message is generic dissatisfaction, a bare request for help, a greeting, or only a device/version fragment.
+    exclude_when:
+      - A specific problem becomes clear from the message itself; use the corresponding primary intent.
+      - Do not use merely because a message has multiple issues if one is clearly primary.
+    examples:
+      - "Awrite av got a problem with my iPhone."
+      - "iPhone 7, 10.0.2"
+    priority_notes: Use conservatively when forced single-label classification would otherwise overstate certainty; review for future taxonomy gaps.
+    risk_level: medium

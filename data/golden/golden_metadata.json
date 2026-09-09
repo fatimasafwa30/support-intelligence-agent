@@ -1,0 +1,56 @@
+{
+  "golden_set_version": "1.0.0",
+  "sample_size": 250,
+  "brand": "AppleSupport",
+  "source_dataset": "Kaggle Customer Support on Twitter (twcs.csv)",
+  "eligible_inbound_messages": 119681,
+  "sampling_method": "Stratified candidate sampling across conversation lengths, intent clusters, risk levels, and difficulty tiers",
+  "sampling_seed": 20260909,
+  "taxonomy_version": "1.0.0",
+  "annotation_status": "complete",
+  "annotation_method": "100% manual human review across multi-turn conversational context",
+  "intent_count": 15,
+  "intent_distribution": {
+    "device_hardware": 46,
+    "software_update": 44,
+    "battery_power": 38,
+    "other_unclear": 25,
+    "connectivity": 19,
+    "apple_id_account": 16,
+    "repair_service": 13,
+    "icloud": 8,
+    "app_store": 7,
+    "billing_payments": 7,
+    "security_privacy": 7,
+    "subscriptions_media": 7,
+    "orders_delivery": 6,
+    "how_to_information": 5,
+    "setup_activation": 2
+  },
+  "action_distribution": {
+    "ESCALATE": 180,
+    "AUTO_HANDLE": 70
+  },
+  "risk_distribution": {
+    "medium": 125,
+    "high": 105,
+    "critical": 10,
+    "low": 10
+  },
+  "evaluation_policy": {
+    "usage_restriction": "Strictly reserved for evaluation and benchmarking; must NEVER be used for model training, few-shot prompt tuning, or retrieval corpus ingestion.",
+    "action_independence": "Routing action (AUTO_HANDLE vs ESCALATE) is an independent operational policy decision governed by risk, resolution availability, and support boundaries, separate from intent classification."
+  },
+  "files": {
+    "candidates_csv": {
+      "path": "data/golden/golden_candidates.csv",
+      "sha256": "d30649967307aae70633ec56b7c9fafecf3246929862ef4383ce6529620319a4",
+      "row_count": 250
+    },
+    "annotation_csv": {
+      "path": "data/golden/golden_annotation.csv",
+      "sha256": "854cda964c0f63f9268ba00e3e4e28a8d212cbea3b5ef9aa3fa99e773c8258f7",
+      "row_count": 250
+    }
+  }
+}
