@@ -347,6 +347,13 @@ class TestAgentController(unittest.TestCase):
         self.assertGreater(len(d["trace"]), 3)
         self.assertGreater(d["total_latency_ms"], 0.0)
 
+    def test_offline_default_initialization(self):
+        """Regression: Verify AgentController instantiates with default offline mock generator without error."""
+        controller = AgentController()
+        self.assertIsInstance(controller.generator, MockReplyGenerator)
+        self.assertIsInstance(controller.risk_detector, RiskDetector)
+        self.assertIsInstance(controller.escalation_engine, EscalationEngine)
+
 
 if __name__ == "__main__":
     unittest.main()

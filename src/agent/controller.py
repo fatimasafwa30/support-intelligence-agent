@@ -92,7 +92,7 @@ class AgentController:
         self.retriever = retriever
         self._retriever_loaded = retriever is not None
 
-        self.generator = generator or create_reply_generator(mock=True)
+        self.generator = generator or create_reply_generator(provider="mock")
         self.risk_detector = risk_detector or RiskDetector()
         self.escalation_engine = escalation_engine or EscalationEngine(
             intent_confidence_threshold=self.intent_confidence_threshold,
