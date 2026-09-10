@@ -1,0 +1,117 @@
+# ==============================================================================
+# Customer Support Grounded Reply Quality Evaluation Configuration
+# Milestone 17.1: Evaluation Rubric & Dataset Design
+# ==============================================================================
+
+version: "1.0.0"
+
+# Evaluation Dimensions & Scoring Scale
+scoring_scale:
+  min_score: 1
+  max_score: 5
+  step: 1
+  evaluator_types:
+    - "human"
+    - "llm_judge"
+
+dimensions:
+  groundedness:
+    name: "Groundedness"
+    description: "Degree to which all factual claims, troubleshooting steps, and URLs are strictly supported by the retrieved historical evidence."
+    scoring_guidance:
+      1: "Completely ungrounded: hallucinated claims, non-existent URLs, or fabricated technical steps not found in evidence."
+      2: "Mostly ungrounded: includes severe unsupported assertions or mismatched facts alongside minimal evidence."
+      3: "Partially grounded: core claims derive from evidence, but includes minor extraneous or unverified technical assertions."
+      4: "Well grounded: all core claims and URLs are supported by retrieved evidence; minor ungrounded polite conversational filler only."
+      5: "Fully grounded: 100% of facts, URLs, and troubleshooting instructions directly derive from verified retrieved evidence."
+
+  correctness:
+    name: "Correctness"
+    description: "Technical and factual accuracy of the provided advice and alignment with official Apple support procedures."
+    scoring_guidance:
+      1: "Factually wrong or harmful: advice would worsen the problem, cause data loss, or violate safety protocols."
+      2: "Substantially incorrect: misidentifies the root cause or provides outdated/invalid troubleshooting steps."
+      3: "Partially correct: plausible general direction, but contains minor technical inaccuracies or misses key prerequisites."
+      4: "Mostly correct: technically sound advice with only trivial omissions that do not hinder resolution."
+      5: "Completely correct: technically flawless, accurate, and completely aligned with official Apple support procedures."
+
+  relevance:
+    name: "Relevance"
+    description: "How directly and specifically the reply addresses the customer's stated issue, device context, and constraints."
+    scoring_guidance:
+      1: "Completely irrelevant: fails to address the customer's inquiry or responds to an entirely different issue."
+      2: "Tangentially relevant: mentions related concepts or keywords, but fails to address the core customer problem."
+      3: "Moderately relevant: addresses part of the question, but ignores key context or specific details provided."
+      4: "Highly relevant: directly addresses the customer's main concern with minimal extraneous information."
+      5: "Perfectly targeted: precisely addresses the exact problem, device model, and situation described by the customer."
+
+  helpfulness:
+    name: "Helpfulness"
+    description: "Actionability, clarity, and usefulness of the reply in moving the customer toward resolution or next steps."
+    scoring_guidance:
+      1: "Useless or obstructive: leaves the customer stranded with no actionable path forward or confusing advice."
+      2: "Minimally helpful: overly vague or asks generic questions without providing guidance or clear next steps."
+      3: "Moderately helpful: provides a basic next step or link, but lacks depth or clear troubleshooting structure."
+      4: "Very helpful: clear, actionable resolution steps or targeted, efficient clarification request."
+      5: "Exemplary: immediately actionable, provides official self-serve path or exact next steps to rapid resolution."
+
+  tone:
+    name: "Tone"
+    description: "Professionalism, empathy, courtesy, and brand alignment matching Apple Support's customer-first voice."
+    scoring_guidance:
+      1: "Inappropriate: rude, dismissive, robotic, defensive, or hostile."
+      2: "Poor: cold, awkward, condescending, or excessively bureaucratic."
+      3: "Acceptable: neutral and polite, but impersonal and lacking warmth or empathy."
+      4: "Good: courteous, professional, helpful, and pleasant."
+      5: "Exemplary: empathetic, warm, patient, and highly professional; perfectly captures the Apple Support brand voice."
+
+# Evaluation Unit Definition
+evaluation_unit:
+  required_fields:
+    - "customer_query"
+    - "predicted_intent"
+    - "retrieved_evidence"
+    - "generated_reply"
+  isolation_policy: "Replies must NEVER be evaluated in isolation. Context and evidence are mandatory for grounded assessment."
+
+# Automated Quality & Grounding Checks
+automated_checks:
+  evidence_id_whitelist:
+    enabled: true
+    description: "Ensure all evidence IDs cited in the reply exist in the retrieved evidence set."
+  url_whitelist:
+    enabled: true
+    description: "Ensure all HTTP/HTTPS links present in the reply text exist in the retrieved evidence."
+  metadata_consistency:
+    enabled: true
+    description: "Validate that grounded=True only when evidence supports claims, and action matches retrieval status."
+  weak_evidence_handling:
+    enabled: true
+    description: "Ensure weak-evidence inquiries (similarity < 0.35) trigger clarification rather than ungrounded claims."
+  hallucinated_url_check:
+    enabled: true
+    description: "Flag any fabricated URLs not present in official evidence."
+
+# Dataset Design & Sampling Configuration
+dataset_design:
+  evaluation_source: "data/golden/golden_annotation.csv"
+  total_golden_examples: 250
+  human_subset_size: 50
+  human_sampling_strategy: "Stratified sampling across intent categories, confidence quartiles, and routing actions."
+  stratification_keys:
+    - "gold_intent"
+    - "gold_action"
+    - "pred_intent"
+    - "intent_confidence_bucket"
+  agreement_metrics:
+    - "cohen_kappa"
+    - "weighted_kappa"
+    - "pearson_correlation"
+    - "mean_absolute_difference"
+
+# Excluded Primary Metrics
+excluded_primary_metrics:
+  - metric: "BLEU"
+    rationale: "N-gram precision measures lexical overlap against a single reference tweet; valid, helpful, grounded replies frequently use different phrasing."
+  - metric: "ROUGE"
+    rationale: "N-gram recall penalizes concise or structured variations of valid resolution steps."

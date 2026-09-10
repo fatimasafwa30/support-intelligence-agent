@@ -1,1 +1,33 @@
 """Evaluation package."""
+
+from src.evaluation.reply_quality_schema import (
+    DIMENSION_CORRECTNESS,
+    DIMENSION_GROUNDEDNESS,
+    DIMENSION_HELPFULNESS,
+    DIMENSION_RELEVANCE,
+    DIMENSION_TONE,
+    EVALUATOR_HUMAN,
+    EVALUATOR_LLM_JUDGE,
+    RUBRIC_DIMENSIONS,
+    SCORE_MAX,
+    SCORE_MIN,
+    VALID_EVALUATOR_TYPES,
+    EvaluationUnit,
+    ReplyQualityRating,
+)
+
+__all__ = [
+    "DIMENSION_CORRECTNESS",
+    "DIMENSION_GROUNDEDNESS",
+    "DIMENSION_HELPFULNESS",
+    "DIMENSION_RELEVANCE",
+    "DIMENSION_TONE",
+    "EVALUATOR_HUMAN",
+    "EVALUATOR_LLM_JUDGE",
+    "EvaluationUnit",
+    "RUBRIC_DIMENSIONS",
+    "ReplyQualityRating",
+    "SCORE_MAX",
+    "SCORE_MIN",
+    "VALID_EVALUATOR_TYPES",
+]
