@@ -1,0 +1,48 @@
+# Configuration for Agent Golden Set Evaluation (Milestone 18.1)
+version: "1.0.0"
+
+dataset:
+  golden_path: "data/golden/golden_annotation.csv"
+  expected_sample_size: 250
+  brand: "AppleSupport"
+
+outputs:
+  report_markdown: "reports/agent_golden_evaluation.md"
+  misclassifications_csv: "reports/agent_misclassifications.csv"
+  summary_json: "reports/agent_evaluation_summary.json"
+
+baselines:
+  # Verified from reports/intent_classifier_golden_evaluation.txt
+  classifier_standalone:
+    specific_intent_accuracy: 0.5200
+    specific_intent_macro_f1: 0.5019
+    specific_intent_weighted_f1: 0.5054
+    specific_intent_support: 225
+    full_set_accuracy: 0.4680
+    full_set_support: 250
+    high_confidence_accuracy: 0.8205
+    high_confidence_support: 78
+    other_unclear_low_conf_rate: 0.9600
+    other_unclear_support: 25
+  # Verified from reports/escalation_golden_evaluation.txt (Milestone 16)
+  linear_pipeline:
+    binary_action_accuracy: 0.7080
+    binary_macro_f1: 0.4623
+    escalate_precision: 0.7238
+    escalate_recall: 0.9611
+    escalate_f1: 0.8258
+    auto_handle_precision: 0.3636
+    auto_handle_recall: 0.0571
+    auto_handle_f1: 0.0988
+    under_escalation_rate: 0.0389
+    under_escalation_count: 7
+    false_escalation_rate_on_auto: 0.9429
+    false_escalation_count: 66
+    overall_escalation_rate: 0.9560
+    overall_escalation_count: 239
+    critical_safety_recall: 1.0000
+    critical_safety_count: 10
+
+reporting:
+  primary_action_mode: "three_way"      # AUTO_HANDLE, ASK_CLARIFICATION, ESCALATE
+  secondary_action_mode: "binary"       # AUTO_HANDLE vs Non-AUTO (ESCALATE + ASK_CLARIFICATION)

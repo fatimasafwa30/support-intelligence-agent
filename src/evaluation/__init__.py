@@ -1,5 +1,9 @@
 """Evaluation package."""
 
+from src.evaluation.agent_evaluator import (
+    AgentEvaluationRecord,
+    AgentEvaluator,
+)
 from src.evaluation.reply_quality_schema import (
     DIMENSION_CORRECTNESS,
     DIMENSION_GROUNDEDNESS,
@@ -17,6 +21,8 @@ from src.evaluation.reply_quality_schema import (
 )
 
 __all__ = [
+    "AgentEvaluationRecord",
+    "AgentEvaluator",
     "DIMENSION_CORRECTNESS",
     "DIMENSION_GROUNDEDNESS",
     "DIMENSION_HELPFULNESS",
