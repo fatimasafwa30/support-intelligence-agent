@@ -1,0 +1,52 @@
+# Operational Escalation & Risk Policy Configuration
+# Thresholds represent initial engineering heuristics, not calibrated probabilities.
+
+thresholds:
+  intent_confidence_threshold: 0.50
+  retrieval_similarity_threshold: 0.35
+  intent_confidence_high: 0.70
+  retrieval_similarity_high: 0.50
+
+risk_signals:
+  critical_safety:
+    - '\b(?:swelling|swollen|bulging)\b'
+    - '\b(?:smoke|smoking|fire)\b'
+    - '\b(?:exploded|explosion|sparking|sparks)\b'
+    - '\bburn(?:ed|ing|t)?\s+(?:my\s+)?(?:hand|skin|finger|leg|body)\b'
+    - '\b(?:shocked me|electrocuted)\b'
+    - '\b(?:melting|melted|caught on fire)\b'
+
+  critical_security:
+    - '\b(?:hacked|account takeover)\b'
+    - '\b(?:extortion|blackmail(?:ing)?)\b'
+    - '\b(?:scam|phishing|suspicious email)\b'
+    - '\b(?:unauthorized|fraudulent)\s+(?:charge|transaction)s?\b'
+    - '\b(?:stole|stolen)\s+(?:my\s+)?(?:phone|identity|credit card)\b'
+    - '\bcredit card stolen\b'
+
+  physical_damage:
+    - '\b(?:cracked|shattered|broken)\s+(?:screen|glass|display)\b'
+    - '\b(?:water damage|liquid spill|dropped in water|dropped in (?:the )?toilet)\b'
+    - '\bbent (?:iphone|ipad|phone)\b'
+    - '\bbutton (?:fell off|broken|jammed|stuck)\b'
+    - '\bcharging port (?:is\s+)?(?:broken|damaged|corroded)\b'
+
+  financial_dispute:
+    - '\b(?:charged twice|double charged)\b'
+    - '\bdisput(?:e|ing)\s+(?:the\s+)?charge\b'
+    - '\bunrecognized charge\b'
+    - '\brefund (?:refused|rejected|denied)\b'
+    - '\bbank dispute\b'
+
+  legal_regulatory:
+    - '\b(?:lawyer|lawsuit|legal action)\b'
+    - '\bsu(?:e|ing)\s+you\b'
+    - '\b(?:police report|consumer court|trading standards)\b'
+
+routing_destinations:
+  self_service: "self_service"
+  safety_team: "safety_team"
+  account_security: "account_security"
+  hardware_repair: "hardware_repair"
+  billing_support: "billing_support"
+  general_support: "general_support"
