@@ -1,4 +1,4 @@
-"""End-to-end audit and validation test suite for the full Hiver support-agent pipeline.
+"""End-to-end audit and validation test suite for the full support intelligence agent pipeline.
 
 Validates all 8 core lifecycle scenarios across the complete controller pipeline:
 1. Clear low-risk support query (AUTO_HANDLE)

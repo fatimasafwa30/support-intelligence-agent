@@ -1,6 +1,6 @@
-# Hiver Support Agent
+# Support Intelligence Agent
 
-> **Production-Grade Automated Support Decision System & Evaluator Report**
+> **Production-Grade Automated Support Decision System & Evaluation Benchmark**
 > *Deterministic intent classification, historical resolution retrieval, grounded reply drafting, and conservative safety routing on the AppleSupport Twitter dataset.*
 
 ---
@@ -22,6 +22,9 @@ From the multi-brand Kaggle Customer Support dataset, **AppleSupport** (`@AppleS
 
 ### The Dataset
 The system is built on the Kaggle *Customer Support on Twitter* dataset (~2.8M tweets total). The corpus was filtered to `@AppleSupport`, reconstructed into threaded multi-turn dialogues using `first_tweet_id`, and partitioned at the conversation level into strict, non-overlapping train, development, test, and evaluation sets.
+
+> [!NOTE]
+> **Dataset Acquisition**: Raw dataset files are excluded from version control. To rebuild conversations and historical resolution indices from scratch, download `twcs.csv` directly from [Kaggle Customer Support on Twitter](https://www.kaggle.com/datasets/thoughtvector/customer-support-on-twitter) and place it under `data/raw/twcs.csv`. The evaluation benchmark (`data/golden/golden_annotation.csv`) and frozen model artifacts are pre-packaged for immediate reproduction.
 
 ### What the Agent Does
 For each incoming customer query, the system executes an automated decision pipeline:
@@ -192,7 +195,7 @@ Authoritative metrics verified against the frozen evaluation artifacts (`reports
 ## 6. What is misleading about my headline number?
 
 > [!CAUTION]
-> ### Unusually Candid Evaluator-Grade Appraisal
+> ### Unusually Candid Production-Grade Appraisal
 > At first glance, a **72.00% binary action accuracy** and **100.00% critical safety recall** suggest an agent that is ready for customer-facing deployment. **Marketing this headline number as production readiness would be profoundly misleading.**
 
 Here is what the headline number hides:
@@ -353,8 +356,8 @@ The following instructions allow an evaluator to reproduce all results and launc
 
 ### Step 1: Clone Repository & Set Up Virtual Environment
 ```powershell
-git clone <repo-url> hiver-support-agent
-cd hiver-support-agent
+git clone https://github.com/fatimasafwa30/support-intelligence-agent.git
+cd support-intelligence-agent
 
 # Create and activate Python virtual environment
 python -m venv .venv
@@ -407,7 +410,7 @@ Open **http://127.0.0.1:8765** in any modern web browser.
 ## 11. Repository Structure
 
 ```
-hiver-support-agent/
+support-intelligence-agent/
 ├── configs/                        # YAML configurations for agent, evaluation, and models
 │   ├── agent_controller.yaml       # Thresholds, timeouts, and retrieval retry limits
 │   ├── agent_evaluation.yaml       # Evaluation benchmark parameters and baseline configs
@@ -448,7 +451,7 @@ hiver-support-agent/
 │   ├── intents/                    # TF-IDF vectorization and Logistic Regression
 │   └── retrieval/                  # Historical resolution corpus and TF-IDF search
 ├── tests/                          # 245 automated tests (unit, regression, contract)
-├── README.md                       # Evaluator-facing final project report
+├── README.md                       # Comprehensive system and evaluation report
 └── requirements.txt                # Pinned Python dependencies
 ```
 

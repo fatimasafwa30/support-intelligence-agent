@@ -27,6 +27,9 @@ data/raw/*
 !data/raw/.gitkeep
 data/processed/*
 !data/processed/.gitkeep
+!data/processed/models/
+!data/processed/models/intent_classifier_baseline.joblib
+!data/processed/models/tfidf_retriever.joblib
 data/golden/*
 !data/golden/.gitkeep
 reports/*

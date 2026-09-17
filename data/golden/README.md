@@ -1,6 +1,6 @@
 # AppleSupport Customer Support Golden Evaluation Set
 
-This directory houses the ground-truth **250-example Golden Set** created for evaluating the Hiver Customer Support Agent.
+This directory houses the ground-truth **250-example Golden Set** created for evaluating the Support Intelligence Agent.
 
 ---
 

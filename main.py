@@ -1,9 +1,9 @@
-"""Entry point for the Hiver Support Agent project."""
+"""Entry point for the Support Intelligence Agent project."""
 
 
 def main() -> None:
     """Run the project placeholder."""
-    print("Hiver Support Agent project foundation is ready.")
+    print("Support Intelligence Agent project foundation is ready.")
 
 
 if __name__ == "__main__":

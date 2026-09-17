@@ -114,4 +114,4 @@ Limitations:
 - There is no authentication, persistent history, database, message delivery or
   external LLM provider. Keep this server local.
 - Python's standard-library server and syntax-only JS linting are deliberately
-  limited to a local take-home demonstration.
+  limited to a local prototype demonstration.
