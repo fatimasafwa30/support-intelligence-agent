@@ -3,6 +3,10 @@
 > **Production-Grade Automated Support Decision System & Evaluation Benchmark**
 > *Deterministic intent classification, historical resolution retrieval, grounded reply drafting, and conservative safety routing on the AppleSupport Twitter dataset.*
 
+**Live Demo**: [https://support-intelligence-agent.onrender.com/](https://support-intelligence-agent.onrender.com/)
+
+*Hosted console running in deterministic offline-generation mode — no external API key required.*
+
 ---
 
 ## 1. Project Overview
