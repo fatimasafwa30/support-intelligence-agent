@@ -105,9 +105,12 @@ class ConsoleService:
             self.lock.release()
 
 
-def make_server(port=8765, service=None, static_root=None):
+def make_server(port=8765, service=None, static_root=None, host="127.0.0.1"):
     service = service or ConsoleService()
-    static_root = Path(static_root or ROOT / "frontend/dist")
+    if static_root is None:
+        static_dist = ROOT / "frontend/dist"
+        static_root = static_dist if (static_dist / "index.html").exists() else ROOT / "frontend"
+    static_root = Path(static_root)
     assets = {"/": ("index.html", "text/html"), "/app.js": ("app.js", "text/javascript"),
               "/view.js": ("view.js", "text/javascript"), "/styles.css": ("styles.css", "text/css")}
 
@@ -129,11 +132,20 @@ def make_server(port=8765, service=None, static_root=None):
 
         def local_request(self):
             expected = f"127.0.0.1:{self.server.server_port}"
-            host = self.headers.get("Host", "")
-            if host not in {expected, f"localhost:{self.server.server_port}"}:
-                self.respond(403, {"error": "Local access only."})
+            host_header = self.headers.get("Host", "")
+            if self.server.server_address[0] == "127.0.0.1":
+                if host_header not in {expected, f"localhost:{self.server.server_port}"}:
+                    self.respond(403, {"error": "Local access only."})
+                    return False
+            elif not host_header:
+                self.respond(400, {"error": "Host header required."})
                 return False
-            if self.headers.get("Origin") not in (None, f"http://{host}"):
+            origin = self.headers.get("Origin")
+            allowed_origins = {None, f"http://{host_header}", f"https://{host_header}"}
+            host_name = host_header.split(":")[0]
+            allowed_origins.add(f"http://{host_name}")
+            allowed_origins.add(f"https://{host_name}")
+            if origin not in allowed_origins:
                 self.respond(403, {"error": "Same-origin access required."})
                 return False
             return True
@@ -178,6 +190,6 @@ def make_server(port=8765, service=None, static_root=None):
             except Exception:
                 self.respond(503, {"error": "Analysis unavailable. Check the local model artifacts and restart the server."})
 
-    server = ThreadingHTTPServer(("127.0.0.1", port), Handler)
+    server = ThreadingHTTPServer((host, port), Handler)
     server.daemon_threads = True
     return server

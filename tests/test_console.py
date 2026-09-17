@@ -127,6 +127,75 @@ class TestConsoleHTTP(unittest.TestCase):
             self.assertEqual(caught.exception.code, 404)
             caught.exception.close()
 
+    def test_get_server_config_environment_precedence(self):
+        import os
+        from scripts.serve_console import get_server_config
+        old_port = os.environ.pop("PORT", None)
+        old_host = os.environ.pop("HOST", None)
+        try:
+            host, port = get_server_config()
+            self.assertEqual(host, "127.0.0.1")
+            self.assertEqual(port, 8765)
+
+            os.environ["PORT"] = "10000"
+            host, port = get_server_config()
+            self.assertEqual(host, "0.0.0.0")
+            self.assertEqual(port, 10000)
+
+            os.environ["HOST"] = "0.0.0.0"
+            host, port = get_server_config()
+            self.assertEqual(host, "0.0.0.0")
+            self.assertEqual(port, 10000)
+        finally:
+            if old_port is not None:
+                os.environ["PORT"] = old_port
+            else:
+                os.environ.pop("PORT", None)
+            if old_host is not None:
+                os.environ["HOST"] = old_host
+            else:
+                os.environ.pop("HOST", None)
+
+    def test_bound_to_all_interfaces_supports_cloud_deployment(self):
+        server = make_server(0, self.service, host="0.0.0.0")
+        thread = threading.Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        try:
+            port = server.server_port
+            url = f"http://127.0.0.1:{port}"
+            with urlopen(f"{url}/api/health") as response:
+                self.assertEqual(response.status, 200)
+
+            req = Request(
+                f"{url}/api/analyze",
+                data=json.dumps({"message": "query"}).encode(),
+                headers={
+                    "Content-Type": "application/json",
+                    "Host": "support-intelligence.onrender.com",
+                    "Origin": "https://support-intelligence.onrender.com",
+                },
+            )
+            with urlopen(req, timeout=3) as resp:
+                self.assertEqual(resp.status, 200)
+
+            evil_req = Request(
+                f"{url}/api/analyze",
+                data=json.dumps({"message": "query"}).encode(),
+                headers={
+                    "Content-Type": "application/json",
+                    "Host": "support-intelligence.onrender.com",
+                    "Origin": "https://evil.attacker.com",
+                },
+            )
+            with self.assertRaises(HTTPError) as caught:
+                urlopen(evil_req, timeout=3)
+            self.assertEqual(caught.exception.code, 403)
+            caught.exception.close()
+        finally:
+            server.shutdown()
+            server.server_close()
+            thread.join()
+
 
 if __name__ == "__main__":
     unittest.main()
