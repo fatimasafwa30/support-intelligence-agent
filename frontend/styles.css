@@ -1337,12 +1337,38 @@ textarea::placeholder { color: #87928d; }
 .bar-clarify-safe { background: #687982; }
 .bar-under-esc { background: #d32f2f; font-weight: 700; }
 
+.decon-bar-legend {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 8px;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink);
+  line-height: 1.35;
+}
+.legend-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  flex-shrink: 0;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+}
+
 /* Audit Table */
 .table-section {
   margin-bottom: 24px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 .audit-table {
   width: 100%;
+  min-width: 520px;
   border-collapse: collapse;
   font-size: 12px;
   background: var(--paper);
@@ -1551,9 +1577,20 @@ textarea::placeholder { color: #87928d; }
   font-size: 12px;
   line-height: 1.4;
   color: var(--ink);
-  display: flex;
-  align-items: baseline;
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  align-items: start;
   gap: 8px;
+}
+.mitigation-content {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.mitigation-content code,
+.mitigation-content em {
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 .future-tag {
   font-family: var(--font-mono);
@@ -1599,36 +1636,79 @@ textarea::placeholder { color: #87928d; }
   .decision-head { grid-template-columns: 1fr; gap: 10px; padding: 12px 14px; }
   .decision-head h2 { font-size: 22px; }
 
-  /* Compact 5-column or clean 2-row pipeline */
+  /* Compact 2-column or clean 2-row pipeline */
   .workbench { grid-template-columns: 1fr; gap: 16px; }
   .outcome-guide { grid-template-columns: 1fr; gap: 12px; padding: 10px 0; }
 
   .metrics-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .deconstruction-grid { grid-template-columns: 1fr; }
   .fact-vs-hypo { grid-template-columns: 1fr; }
-}
 
-/* Mobile Devices (<640px) */
-@media (max-width: 640px) {
-  main { padding: 0 14px 16px; }
-  .masthead { padding: 8px 14px; height: auto; flex-direction: column; align-items: stretch; gap: 10px; }
-  .brand-group { flex-direction: column; align-items: flex-start; gap: 10px; }
-  .brand { font-size: 19px; }
-  .view-tabs { width: 100%; display: grid; grid-template-columns: repeat(3, 1fr); text-align: center; }
-  .tab-button { padding: 5px 4px; font-size: 9px; }
-  .connection { justify-content: space-between; }
+  /* Problem 1: Future Work shared mitigation block across Modes 01–05 */
+  .mitigation-box {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: start;
+    gap: 6px;
+    padding: 10px 12px;
+  }
+  .mitigation-content {
+    width: 100%;
+    font-size: 12px;
+    line-height: 1.45;
+  }
+  .mitigation-content strong {
+    display: block;
+    margin-bottom: 2px;
+    color: var(--ink);
+  }
+  .mitigation-content code,
+  .mitigation-content em {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
 
-  #analyze-form { grid-template-columns: 1fr; gap: 8px; }
-  .composer-footer { flex-direction: row-reverse; align-items: center; }
-  .primary { width: auto; flex: 1; height: 42px; }
-  #input-help { max-width: 140px; }
-  .shortcut { display: none; }
+  /* Problem 2: 72% Headline introductory header stacking */
+  .deconstruction-section .section-heading {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  .deconstruction-section .section-heading h2 {
+    width: 100%;
+    font-size: 22px;
+    line-height: 1.25;
+    margin: 2px 0 4px;
+  }
 
-  .demo-row { flex-direction: column; align-items: flex-start; gap: 4px; }
-  #demos { display: grid; grid-template-columns: 1fr 1fr; width: 100%; gap: 4px; }
-  #demos button { min-height: 38px; text-align: left; }
+  /* Failure Card headers and examples */
+  .failure-card {
+    padding: 14px 16px;
+  }
+  .failure-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  .failure-card-header h2 {
+    flex: 1 1 100%;
+    width: 100%;
+    font-size: 17px;
+    line-height: 1.3;
+  }
+  .example-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+  }
+  .example-row p {
+    width: 100%;
+  }
+  .example-row code {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
 
-  /* Mobile trace: 2-column grid with final action full-width */
+  /* Trace 2-column layout on tablet/mobile */
   .trace { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
   .trace li { border: 1px solid var(--line); }
   .trace li + li { border-left: 1px solid var(--line); }
@@ -1645,10 +1725,68 @@ textarea::placeholder { color: #87928d; }
 
   .source-selectors { flex-direction: column; }
   .source-selector + .source-selector { border-left: 0; border-top: 1px solid var(--line); }
+
+  .policy-codes li {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+  .policy-codes code {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+}
+
+/* Mobile Devices (<640px) */
+@media (max-width: 640px) {
+  main { padding: 0 14px 16px; }
+  .masthead { padding: 8px 14px; height: auto; flex-direction: column; align-items: stretch; gap: 10px; }
+  .brand-group { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .brand { font-size: 19px; }
+  .view-tabs { width: 100%; display: grid; grid-template-columns: repeat(3, 1fr); text-align: center; }
+  .tab-button {
+    padding: 6px 3px;
+    font-size: 9px;
+    line-height: 1.25;
+    white-space: normal;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-height: 34px;
+  }
+  .connection { justify-content: space-between; }
+
+  #analyze-form { grid-template-columns: 1fr; gap: 8px; }
+  .composer-footer { flex-direction: column; align-items: stretch; gap: 6px; }
+  .primary { width: 100%; height: 42px; order: 1; }
+  #input-help { max-width: 100%; order: 2; }
+  .shortcut { display: none; }
+
+  .demo-row { flex-direction: column; align-items: flex-start; gap: 4px; }
+  #demos { display: grid; grid-template-columns: 1fr 1fr; width: 100%; gap: 4px; }
+  #demos button { min-height: 38px; text-align: left; }
+
   .source-exchange { grid-template-columns: 1fr; }
   .reply-checks { grid-template-columns: 1fr; }
 
+  /* Problem 3: Metric / Distribution bars on small screens */
+  .decon-bar-label {
+    flex-direction: column;
+    gap: 2px;
+  }
+  .decon-visual-bar {
+    height: 12px;
+    border-radius: 2px;
+  }
+  .decon-visual-bar .segment-text {
+    display: none;
+  }
+  .decon-bar-legend {
+    display: flex;
+  }
+
   .metrics-grid { grid-template-columns: 1fr; }
+  .metric-value { font-size: clamp(20px, 5.5vw, 26px); }
   .provenance-grid { grid-template-columns: 1fr; }
   .panel-header { flex-direction: column; align-items: flex-start; gap: 8px; }
   .provenance-tag { align-items: flex-start; text-align: left; }

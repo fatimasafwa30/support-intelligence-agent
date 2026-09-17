@@ -158,8 +158,12 @@
                   <span>72% ESCALATE vs 28% AUTO</span>
                 </div>
                 <div class="decon-visual-bar" aria-label="72% Gold Escalate, 28% Gold Auto">
-                  <span class="bar-segment bar-esc" style="width: 72%;">180 Gold ESCALATE (72.0%)</span>
-                  <span class="bar-segment bar-auto" style="width: 28%;">70 Gold AUTO (28.0%)</span>
+                  <span class="bar-segment bar-esc" style="width: 72%;"><span class="segment-text">180 Gold ESCALATE (72.0%)</span></span>
+                  <span class="bar-segment bar-auto" style="width: 28%;"><span class="segment-text">70 Gold AUTO (28.0%)</span></span>
+                </div>
+                <div class="decon-bar-legend" aria-hidden="true">
+                  <div class="legend-item"><span class="legend-dot bar-esc"></span><span>180 Gold ESCALATE (72.0%)</span></div>
+                  <div class="legend-item"><span class="legend-dot bar-auto"></span><span>70 Gold AUTO (28.0%)</span></div>
                 </div>
               </div>
             </div>
@@ -175,9 +179,14 @@
                   <span>Only 8 Automated (11.4%)</span>
                 </div>
                 <div class="decon-visual-bar" aria-label="8 Auto-handled, 38 Clarified, 24 Escalated">
-                  <span class="bar-segment bar-auto-success" style="width: 11.4%;">8 Auto (11.4%)</span>
-                  <span class="bar-segment bar-clarify" style="width: 54.3%;">38 Ask Clarify (54.3%)</span>
-                  <span class="bar-segment bar-escalate-divert" style="width: 34.3%;">24 Escalate (34.3%)</span>
+                  <span class="bar-segment bar-auto-success" style="width: 11.4%;"><span class="segment-text">8 Auto (11.4%)</span></span>
+                  <span class="bar-segment bar-clarify" style="width: 54.3%;"><span class="segment-text">38 Ask Clarify (54.3%)</span></span>
+                  <span class="bar-segment bar-escalate-divert" style="width: 34.3%;"><span class="segment-text">24 Escalate (34.3%)</span></span>
+                </div>
+                <div class="decon-bar-legend" aria-hidden="true">
+                  <div class="legend-item"><span class="legend-dot bar-auto-success"></span><span>8 Auto (11.4%)</span></div>
+                  <div class="legend-item"><span class="legend-dot bar-clarify"></span><span>38 Ask Clarify (54.3%)</span></div>
+                  <div class="legend-item"><span class="legend-dot bar-escalate-divert"></span><span>24 Escalate (34.3%)</span></div>
                 </div>
               </div>
             </div>
@@ -193,9 +202,14 @@
                   <span>8 Dangerous Misses (4.44%)</span>
                 </div>
                 <div class="decon-visual-bar" aria-label="108 Escalated, 64 Clarified, 8 Under-escalated">
-                  <span class="bar-segment bar-esc-direct" style="width: 60.0%;">108 Direct Escalate (60.0%)</span>
-                  <span class="bar-segment bar-clarify-safe" style="width: 35.6%;">64 Clarify / Safe (35.6%)</span>
-                  <span class="bar-segment bar-under-esc" style="width: 4.4%;">8 Under-Escalate (4.4%)</span>
+                  <span class="bar-segment bar-esc-direct" style="width: 60.0%;"><span class="segment-text">108 Direct Escalate (60.0%)</span></span>
+                  <span class="bar-segment bar-clarify-safe" style="width: 35.6%;"><span class="segment-text">64 Clarify / Safe (35.6%)</span></span>
+                  <span class="bar-segment bar-under-esc" style="width: 4.4%;"><span class="segment-text">8 Under-Escalate (4.4%)</span></span>
+                </div>
+                <div class="decon-bar-legend" aria-hidden="true">
+                  <div class="legend-item"><span class="legend-dot bar-esc-direct"></span><span>108 Direct Escalate (60.0%)</span></div>
+                  <div class="legend-item"><span class="legend-dot bar-clarify-safe"></span><span>64 Clarify / Safe (35.6%)</span></div>
+                  <div class="legend-item"><span class="legend-dot bar-under-esc"></span><span>8 Under-Escalate (4.4%)</span></div>
                 </div>
               </div>
             </div>
@@ -327,7 +341,9 @@
               </div>
               <div class="mitigation-box">
                 <span class="future-tag">FUTURE WORK</span>
-                <strong>One-Week Mitigation:</strong> Negative-intent regex guards for prior failure (<em>"already tried"</em>, <em>"ineligible.*online"</em>, <em>"chat.*unavailable"</em>); mandatory human routing on 2FA disabling; customer confirmation before auto-resolving hardware reboots.
+                <div class="mitigation-content">
+                  <strong>One-Week Mitigation:</strong> Negative-intent regex guards for prior failure (<em>"already tried"</em>, <em>"ineligible.*online"</em>, <em>"chat.*unavailable"</em>); mandatory human routing on 2FA disabling; customer confirmation before auto-resolving hardware reboots.
+                </div>
               </div>
             </div>
           </article>
@@ -364,7 +380,9 @@
               </div>
               <div class="mitigation-box">
                 <span class="future-tag">FUTURE WORK</span>
-                <strong>One-Week Mitigation:</strong> Allow text-only grounded replies when confidence &ge; 0.80 and similarity &ge; 0.30 without requiring an external link; lower similarity threshold to 0.30 for informational intents (<code>battery_power</code>, <code>how_to_information</code>).
+                <div class="mitigation-content">
+                  <strong>One-Week Mitigation:</strong> Allow text-only grounded replies when confidence &ge; 0.80 and similarity &ge; 0.30 without requiring an external link; lower similarity threshold to 0.30 for informational intents (<code>battery_power</code>, <code>how_to_information</code>).
+                </div>
               </div>
             </div>
           </article>
@@ -401,7 +419,9 @@
               </div>
               <div class="mitigation-box">
                 <span class="future-tag">FUTURE WORK</span>
-                <strong>One-Week Mitigation:</strong> Regex slot extractors for hardware (iPhone 6s, Mac) and OS (iOS 11, High Sierra); branch templates by platform; omit questions for slots already present in customer message.
+                <div class="mitigation-content">
+                  <strong>One-Week Mitigation:</strong> Regex slot extractors for hardware (iPhone 6s, Mac) and OS (iOS 11, High Sierra); branch templates by platform; omit questions for slots already present in customer message.
+                </div>
               </div>
             </div>
           </article>
@@ -438,7 +458,9 @@
               </div>
               <div class="mitigation-box">
                 <span class="future-tag">FUTURE WORK</span>
-                <strong>One-Week Mitigation:</strong> Enforce strict domain whitelisting (permitting only <code>support.apple.com</code>, <code>appleid.apple.com</code>); reject or strip <code>t.co</code> DM links; index curated official Knowledge Base articles.
+                <div class="mitigation-content">
+                  <strong>One-Week Mitigation:</strong> Enforce strict domain whitelisting (permitting only <code>support.apple.com</code>, <code>appleid.apple.com</code>); reject or strip <code>t.co</code> DM links; index curated official Knowledge Base articles.
+                </div>
               </div>
             </div>
           </article>
@@ -475,7 +497,9 @@
               </div>
               <div class="mitigation-box">
                 <span class="future-tag">FUTURE WORK</span>
-                <strong>One-Week Mitigation:</strong> Add <code>conversation_history</code> parameter to <code>AgentController</code>; prepend prior turns with turn boundary tokens; experimentally benchmark causal accuracy lift on the 96 multi-turn Golden examples.
+                <div class="mitigation-content">
+                  <strong>One-Week Mitigation:</strong> Add <code>conversation_history</code> parameter to <code>AgentController</code>; prepend prior turns with turn boundary tokens; experimentally benchmark causal accuracy lift on the 96 multi-turn Golden examples.
+                </div>
               </div>
             </div>
           </article>
