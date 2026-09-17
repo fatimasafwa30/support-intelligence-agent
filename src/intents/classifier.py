@@ -35,14 +35,18 @@ class PredictionResult:
     intent: str
     confidence: float
     probabilities: dict[str, float]
+    is_abstained: bool = False
 
     def to_dict(self) -> dict[str, Any]:
         """Convert prediction result to dictionary."""
-        return {
+        d = {
             "intent": self.intent,
             "confidence": round(self.confidence, 4),
             "probabilities": {k: round(v, 4) for k, v in self.probabilities.items()},
         }
+        if self.is_abstained:
+            d["is_abstained"] = True
+        return d
 
 
 def default_preprocessor(text: str) -> str:
@@ -54,6 +58,7 @@ class IntentClassifier:
     """Baseline Intent Classifier combining TF-IDF vectorization and Logistic Regression.
 
     Trained on high-confidence silver data to predict the 14 specific customer support intents.
+    Supports calibrated confidence abstention to return 'other_unclear' for low-confidence inputs.
     """
 
     def __init__(
@@ -67,6 +72,7 @@ class IntentClassifier:
         random_state: int = 42,
         max_iter: int = 1000,
         solver: str = "lbfgs",
+        abstention_threshold: float | None = None,
     ) -> None:
         self.max_features = max_features
         self.ngram_range = ngram_range
@@ -77,6 +83,7 @@ class IntentClassifier:
         self.random_state = random_state
         self.max_iter = max_iter
         self.solver = solver
+        self.abstention_threshold = abstention_threshold
 
         self.pipeline: Pipeline | None = None
         self.classes_: list[str] = []
@@ -141,16 +148,24 @@ class IntentClassifier:
 
         return self
 
-    def predict_one(self, text: str) -> PredictionResult:
+    def predict_one(
+        self,
+        text: str,
+        abstention_threshold: float | None = None,
+    ) -> PredictionResult:
         """Predict intent and probability distribution for a single input text.
 
-        Handles empty/whitespace strings safely.
+        Handles empty/whitespace strings safely. If max class confidence is below
+        the effective abstention threshold, returns intent='other_unclear' with is_abstained=True.
 
         Args:
             text: Customer message text.
+            abstention_threshold: Optional threshold override. If None, uses
+                                  self.abstention_threshold. If that is also None,
+                                  abstention is disabled.
 
         Returns:
-            PredictionResult containing intent, confidence, and class probabilities.
+            PredictionResult containing intent, confidence, probabilities, and is_abstained.
         """
         if not self._is_fitted or self.pipeline is None:
             raise RuntimeError("IntentClassifier is not fitted. Call fit() or load() first.")
@@ -169,18 +184,39 @@ class IntentClassifier:
             for idx, cls_name in enumerate(self.classes_)
         }
 
+        effective_threshold = (
+            self.abstention_threshold if abstention_threshold is None else abstention_threshold
+        )
+        is_abstained = False
+        final_intent = best_intent
+
+        if effective_threshold is not None and best_confidence < effective_threshold:
+            final_intent = "other_unclear"
+            is_abstained = True
+
         return PredictionResult(
-            intent=best_intent,
+            intent=final_intent,
             confidence=best_confidence,
             probabilities=prob_dict,
+            is_abstained=is_abstained,
         )
 
-    def predict(self, texts: Sequence[str]) -> list[PredictionResult]:
+    def predict(
+        self,
+        texts: Sequence[str],
+        abstention_threshold: float | None = None,
+    ) -> list[PredictionResult]:
         """Predict intents and probability distributions for a batch of messages."""
         if not self._is_fitted or self.pipeline is None:
             raise RuntimeError("IntentClassifier is not fitted. Call fit() or load() first.")
 
-        return [self.predict_one(t) for t in texts]
+        return [self.predict_one(t, abstention_threshold=abstention_threshold) for t in texts]
+
+    def predict_proba(self, texts: Sequence[str]) -> np.ndarray:
+        """Return class probability distribution matrix for input texts."""
+        if not self._is_fitted or self.pipeline is None:
+            raise RuntimeError("IntentClassifier is not fitted. Call fit() or load() first.")
+        return self.pipeline.predict_proba(texts)
 
     def get_config(self) -> dict[str, Any]:
         """Return hyperparameter configuration dictionary."""
@@ -194,6 +230,7 @@ class IntentClassifier:
             "random_state": self.random_state,
             "max_iter": self.max_iter,
             "solver": self.solver,
+            "abstention_threshold": self.abstention_threshold,
             "classes": list(self.classes_),
             "num_classes": len(self.classes_),
         }
@@ -248,6 +285,7 @@ class IntentClassifier:
             random_state=config.get("random_state", 42),
             max_iter=config.get("max_iter", 1000),
             solver=config.get("solver", "lbfgs"),
+            abstention_threshold=config.get("abstention_threshold", None),
         )
         classifier.classes_ = list(payload.get("classes", []))
         classifier.pipeline = payload.get("pipeline")

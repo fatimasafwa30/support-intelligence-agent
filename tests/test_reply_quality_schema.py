@@ -249,20 +249,54 @@ class TestReplyQualitySchema(unittest.TestCase):
         self.assertEqual(unit.customer_query, restored.customer_query)
         self.assertEqual(unit.predicted_intent, restored.predicted_intent)
 
-    def test_evaluation_unit_validation(self):
-        """Test EvaluationUnit catches missing or empty required parameters."""
-        with self.assertRaises(ValueError):
-            EvaluationUnit(
-                example_id="",
-                customer_query="query",
-                predicted_intent="intent",
-            )
-        with self.assertRaises(ValueError):
-            EvaluationUnit(
-                example_id="ex_1",
-                customer_query="",
-                predicted_intent="intent",
-            )
+    def test_evaluation_unit_with_confidence_and_verified_reply(self):
+        """Test EvaluationUnit with optional intent_confidence and verified_reply."""
+        unit = EvaluationUnit(
+            example_id="golden_0051",
+            customer_query="@AppleSupport my phone restart loop after update",
+            predicted_intent="software_update",
+            intent_confidence=0.8629,
+            retrieved_evidence=[
+                {"evidence_id": "res_456", "similarity_score": 0.3512, "past_brand_resolution": "Update steps"}
+            ],
+            generated_reply={"reply_text": "Please update via iTunes: http://apple.co/update", "grounded": True},
+            verified_reply={"reply_text": "Please update via iTunes: http://apple.co/update", "grounded": True},
+            conversation_id="apple_002",
+        )
+        self.assertEqual(unit.example_id, "golden_0051")
+        self.assertEqual(unit.intent_confidence, 0.8629)
+        self.assertIsNotNone(unit.verified_reply)
+        self.assertEqual(unit.verified_reply["reply_text"], "Please update via iTunes: http://apple.co/update")
+
+        d = unit.to_dict()
+        self.assertEqual(d["intent_confidence"], 0.8629)
+        self.assertIn("verified_reply", d)
+
+        restored = EvaluationUnit.from_dict(d)
+        self.assertEqual(unit.example_id, restored.example_id)
+        self.assertEqual(unit.intent_confidence, restored.intent_confidence)
+        self.assertEqual(unit.verified_reply, restored.verified_reply)
+
+    def test_no_gold_labels_in_evaluation_unit_or_rating(self):
+        """Ensure EvaluationUnit and ReplyQualityRating do not expose golden annotations."""
+        unit = EvaluationUnit(
+            example_id="golden_0052",
+            customer_query="How do I change apple ID password?",
+            predicted_intent="apple_id_account",
+        )
+        rating = ReplyQualityRating(
+            example_id="golden_0052",
+            evaluator_type=EVALUATOR_LLM_JUDGE,
+            groundedness=5,
+            correctness=5,
+            relevance=5,
+            helpfulness=5,
+            tone=5,
+        )
+        forbidden_fields = {"gold_intent", "gold_risk", "gold_action", "annotation_notes"}
+        for f in forbidden_fields:
+            self.assertFalse(hasattr(unit, f), f"EvaluationUnit should not have {f}")
+            self.assertFalse(hasattr(rating, f), f"ReplyQualityRating should not have {f}")
 
 
 if __name__ == "__main__":

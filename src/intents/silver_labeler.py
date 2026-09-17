@@ -175,8 +175,13 @@ class SilverLabeler:
             r"\breplace(?:ment)?\s+(?:screen|battery|phone|device|unit)\b|"
             r"\b(?:send|mail)\s+(?:it|my\s+(?:phone|device|watch|ipad|mac))\s+in\s+for\s+repair\b|"
             r"\bmail[- ]in\s*service\b|"
-            r"\bapplecare(?:\+)?\s*(?:claim|repair|replacement|service|coverage)\b|"
+            r"\bapple\s*care(?:\+)?\s*(?:claim|repair|replacement|service|coverage)?\b|"
+            r"\b(?:have|got|with|under)\s+apple\s*care(?:\+)?\b|"
             r"\bwarranty\s*(?:claim|covered|repair|replacement|void|reject(?:ed)?)\b|"
+            r"\bunder\s+warranty\b|"
+            r"\b(?:need|want)\s+(?:a\s+)?(?:new|replacement)\s+(?:iphone|ipad|phone|device|macbook)\b|"
+            r"\bget\s+(?:a\s+)?replacement\s+(?:iphone|ipad|phone|device)\b|"
+            r"\bgot\s+(?:my\s+)?(?:phone|iphone|ipad|device|screen)\s+fixed\s+(?:today\s+)?at\s+(?:an?\s+)?apple\s*store\b|"
             # v2: explicit repair cost for broken screen / general fix
             # 'how much do [X] charge to fix' — actor word is optional after @mention stripping
             r"\bhow\s+much\s+(?:do\s+(?:you|apple|\w+\s+)?|does\s+(?:it|apple\s+)?)\s*charge\s+to\s+fix\b|"
@@ -197,8 +202,11 @@ class SilverLabeler:
         )
         self._pat_bluetooth = re.compile(
             r"\bbluetooth\b|"
-            r"\b(?:pair|pairing)\s*(?:with|to|failed|issue|problem)?\b|"
-            r"\bwon'?t\s+pair\b",
+            r"\bpairing\b|"
+            r"\b(?:unpair|unpairing)\b|"
+            r"\b(?:won'?t|cannot|can'?t|fails?\s+to|unable\s+to)\s+pair\b|"
+            r"\bpair\s+(?:with|to|my|device|headphones?|airpods?|watch|phone|speaker)\b|"
+            r"\bpair(?:ing)?\s+(?:failed|issue|problem|mode|error)\b",
             re.IGNORECASE,
         )
         self._pat_cellular_service = re.compile(
@@ -230,7 +238,9 @@ class SilverLabeler:
             r"\bunable\s+to\s+install\s+(?:ios|macos|\d+(?:\.\d+)*|the\s+update)\b|"
             r"\bit\s+says\s+unable\s+to\s+install\b|"
             # v2: "downloaded latest iOS updates" phrasing
-            r"\bdownloaded?\s+(?:the\s+)?latest\s+(?:ios|macos|software)\s+updates?\b",
+            r"\bdownloaded?\s+(?:the\s+)?latest\s+(?:ios|macos|software)\s+updates?\b|"
+            r"\bemojis?\s+(?:haven'?t|won'?t|didn'?t|not)\s+updat(?:ed?|ing)\b|"
+            r"\bupdated?\s+my\s+phone\s+now\s+.*?\s*bugg(?:ing|y)\b",
             re.IGNORECASE,
         )
         self._pat_software_update_general = re.compile(
@@ -238,15 +248,24 @@ class SilverLabeler:
             r"\b(?:ios|macos|watchos|tvos)\s*\d+(?:\.\d+)*\b",
             re.IGNORECASE,
         )
+        # Actionable resolution goals where user wants to downgrade / rollback / restore OS
+        self._pat_update_action_goal = re.compile(
+            r"\b(?:want|would\s+like|need|how\s+do\s+i|can\s+i|trying\s+to|tryna)\s+(?:to\s+)?(?:downgrade|roll\s*back|restore|revert|reinstall)\b|"
+            r"\b(?:downgrade|roll\s*back|revert)\s+(?:back\s+)?to\s+(?:ios|macos|\d+)\b|"
+            r"\b(?:how\s+to|steps?\s+to)\s+(?:downgrade|roll\s*back)\b",
+            re.IGNORECASE,
+        )
 
         # ── 6. Device Hardware ───────────────────────────────────────────────
         # v2: extended with frozen/unresponsive device phrases, general malfunction,
         #     and short-but-strong activation triggers for "iPhones won't activate" style
         self._pat_screen_hardware = re.compile(
-            r"\b(?:screen|display|touchscreen|digitizer|glass)\s+(?:is|was|got|keeps|started|went|looks?|became)?\s*(?:flicker(?:ing)?|glitch(?:ing)?|cracked|broken|shattered|lines?|black|frozen|unresponsive|blank|dead|touch\s*not\s*working|ghost\s*touch|padlock\s*icon|mess(?:ed)?\s*up|distorted|shaking)\b|"
-            r"\b(?:cracked|broken|shattered|glitchy|flickering|frozen|unresponsive|blank)\s+(?:screen|display|glass)\b|"
-            r"\b(?:screen|display|touchscreen)\s+(?:won'?t|doesn'?t|not)\s+(?:turn\s*on|respond|work|touch)\b|"
-            r"\blines\s+on\s+(?:the\s+)?(?:screen|display)\b|"
+            r"\b(?:screens?|displays?|touchscreens?|digitizers?|glass(?:es)?)\s+(?:is|was|got|keeps|started|went|looks?|became)?\s*(?:flicker(?:ing)?|glitch(?:ing)?|cracked|broken|shattered|lines?|black|frozen|unresponsive|blank|dead|touch\s*not\s*working|ghost\s*touch|padlock\s*icon|mess(?:ed)?\s*up|distorted|shaking)\b|"
+            r"\b(?:cracked|broken|shattered|glitchy|flickering|frozen|unresponsive|blank|black)\s+(?:screens?|displays?|glass)\b|"
+            r"\b(?:screens?|displays?|touchscreens?)\s+(?:won'?t|doesn'?t|not)\s+(?:turn\s*on|respond|work|touch)\b|"
+            r"\bshows?\s+(?:a\s+)?(?:black|blank)\s*screens?\b|"
+            r"\b(?:no|can'?t\s+see\s+(?:the\s+)?)\s*login\s*screen\b|"
+            r"\blines\s+on\s+(?:the\s+)?(?:screens?|displays?)\b|"
             r"\bpadlock\s*icon\b|"
             r"\bdead\s*pixels?\b|"
             r"\b(?:3d\s*touch|touch\s*id|face\s*id|touch\s*screen)\s*(?:is\s+)?(?:not\s*working|failed|unresponsive|broken|stopped)\b|"
@@ -262,12 +281,15 @@ class SilverLabeler:
         self._pat_audio_hardware = re.compile(
             r"\b(?:speaker|microphone|mic|earpiece|audio|sound|airpods?|earphones?|earbuds?)\s*(?:is|was|got|keeps|started)?\s*(?:not\s*working|crackl(?:e|ing)|distort(?:ed|ion)|no\s*sound|low\s*volume|buzzing|muffled|failed|stopped|too\s*quiet)\b|"
             r"\bno\s+sound\s+(?:from|on|in)\s+(?:my\s+)?(?:speaker|phone|iphone|ipad|mac|video|call|headphones?)\b|"
+            r"\b(?:alarm|ringer|volume|speaker)\s+(?:has\s+had\s+|has\s+|had\s+)?(?:0|zero|no)\s+volume\b|"
             r"\bheadphones?\s*(?:jack|port)?\s*(?:not\s*working|broken|stuck)\b|"
+            r"\b(?:headphones?|momentums?)\s+.*?\s*(?:remote\s+features?|remote\s+buttons?)\s*(?:not\s*working|broken|fail|do\s+nothing|work)\b|"
+            r"\bremote\s+features?\s*(?:work|working|broken|fail|do\s+nothing)\b|"
             r"\b(?:vibrat(?:ion|or|ing)|taptic\s*engine)\s*(?:not\s*working|broken)\b",
             re.IGNORECASE,
         )
         self._pat_button_hardware = re.compile(
-            r"\b(?:home\s*button|power\s*button|volume\s*button|mute\s*switch|keyboard)\s*(?:is|was|got|keeps|started)?\s*(?:stuck|broken|not\s*working|loose|click(?:ing)?|unresponsive|lag(?:ging)?)\b",
+            r"\b(?:home\s*button|power\s*button|volume\s*button|volume\s*rockers?|mute\s*switch|keyboard)\s*(?:is|was|got|keeps|started|do\s+)?\s*(?:stuck|broken|not\s*working|loose|click(?:ing)?|unresponsive|lag(?:ging)?|nothing)\b",
             re.IGNORECASE,
         )
         # v2: general device malfunction — frozen/unresponsive device as a whole
@@ -287,7 +309,13 @@ class SilverLabeler:
             r"\banimations?\s+(?:are\s+|aren'?t\s+)?(?:laggy|stuttering|janky|not\s+(?:smooth|the\s+best)|slow|glitchy)\b|"
             r"\b(?:slight\s+)?delay\s+(?:in|on|with|and)\s+(?:the\s+)?(?:animation|touch|response|screen)\b|"
             # Catch 'there's a slight delay and the animations aren't the bestest thing'
-            r"\bdelay\s+and\s+the\s+animations?\b",
+            r"\bdelay\s+and\s+the\s+animations?\b|"
+            r"\b(?:phone|iphone|ipad|device)\s+(?:is\s+)?(?:still\s+)?restarting\s+(?:sporadically|frequently|intermittently|constantly|again|randomly)\b|"
+            r"\bscroll(?:ing)?\s+(?:down\s+)?(?:on\s+.*?\s+)?(?:does\s+it\s+)?shoot\s+back\s+to\s+(?:the\s+)?top\b|"
+            r"\bkeeps?\s+autocorrecting\s+to\b|"
+            r"\bautocorrect(?:ing)?\s+(?:issue|bug|problem|glitch|error)\b|"
+            r"\b(?:trying\s+to\s+)?type\s+[iI]\b|"
+            r"\bquestion\s*marks?\s+(?:problem|bug|glitch|issue)\b",
             re.IGNORECASE,
         )
 
@@ -715,6 +743,14 @@ class SilverLabeler:
 
         # (E) Software Update vs Downstream Symptoms
         if has_explicit_update or has_general_update:
+            has_update_action_goal = bool(self._pat_update_action_goal.search(normalized))
+            if has_update_action_goal:
+                return LabelResult(
+                    intent="software_update",
+                    confidence=0.92,
+                    reason="disambiguated:software_action_goal_over_symptom",
+                    matched_rules=matches,
+                )
             if has_battery:
                 return LabelResult(
                     intent="battery_power",

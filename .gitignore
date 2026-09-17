@@ -41,3 +41,7 @@ reports/*
 !data/golden/*.csv
 !data/golden/*.md
 !data/golden/*.json
+
+# Reproducible console build outputs
+frontend/dist/
+frontend/node_modules/

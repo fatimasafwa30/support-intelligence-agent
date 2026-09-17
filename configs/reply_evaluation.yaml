@@ -72,7 +72,11 @@ evaluation_unit:
     - "predicted_intent"
     - "retrieved_evidence"
     - "generated_reply"
-  isolation_policy: "Replies must NEVER be evaluated in isolation. Context and evidence are mandatory for grounded assessment."
+  optional_fields:
+    - "intent_confidence"
+    - "verified_reply"
+    - "conversation_id"
+  isolation_policy: "Replies must NEVER be evaluated in isolation. Context and evidence are mandatory for grounded assessment. Golden Set ground-truth labels (gold_intent, gold_risk, gold_action, annotation_notes) MUST NEVER be passed to the evaluator."
 
 # Automated Quality & Grounding Checks
 automated_checks:
@@ -96,18 +100,37 @@ automated_checks:
 dataset_design:
   evaluation_source: "data/golden/golden_annotation.csv"
   total_golden_examples: 250
+  generated_replies_count: 135
+  non_generated_short_circuits: 115
+  reply_generation_coverage: 0.540  # 135 / 250 (54.0%)
   human_subset_size: 50
-  human_sampling_strategy: "Stratified sampling across intent categories, confidence quartiles, and routing actions."
+  human_sampling_strategy: "Stratified sampling across predicted intents, confidence tiers, and routing actions exclusively from the 135 generated replies."
   stratification_keys:
-    - "gold_intent"
-    - "gold_action"
     - "pred_intent"
     - "intent_confidence_bucket"
+    - "primary_final_action"
+    - "retrieval_sufficiency"
   agreement_metrics:
-    - "cohen_kappa"
-    - "weighted_kappa"
+    - "quadratic_weighted_kappa"
+    - "mean_absolute_error"
+    - "spearman_correlation"
     - "pearson_correlation"
-    - "mean_absolute_difference"
+    - "exact_and_adjacent_agreement"
+
+# LLM-as-a-Judge Configuration (Milestone 19.2)
+llm_judge:
+  provider: "gemini"
+  model: "gemini-2.5-flash"
+  temperature: 0.0
+  max_output_tokens: 1024
+  timeout_seconds: 30.0
+  max_retries: 5
+  retry_base_delay: 2.0
+  request_delay_seconds: 1.0
+  output_records_path: "reports/reply_quality_judge_records.jsonl"
+  output_results_path: "reports/reply_quality_judge_results.json"
+  output_report_path: "reports/reply_quality_judge_report.md"
+  human_sample_path: "reports/human_agreement_sample_50.json"
 
 # Excluded Primary Metrics
 excluded_primary_metrics:

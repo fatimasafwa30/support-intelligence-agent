@@ -1,0 +1,858 @@
+{
+  "metadata": {
+    "evaluation_timestamp": 1789641478.5080633,
+    "sample_size": 250,
+    "benchmark_dataset": "AppleSupport Human-Labelled Golden Set (250 examples)",
+    "evaluation_mode": "read_only_offline_deterministic"
+  },
+  "frozen_benchmark_verification": {
+    "sample_size": 250,
+    "actions_3way": {
+      "ASK_CLARIFICATION": 126,
+      "ESCALATE": 108,
+      "AUTO_HANDLE": 16
+    },
+    "binary_accuracy": 0.72,
+    "under_escalation_count": 8,
+    "under_escalation_rate": 0.0444,
+    "false_escalation_count": 62,
+    "false_escalation_rate": 0.8857,
+    "critical_safety_recall": 1.0,
+    "critical_cases_total": 10,
+    "critical_cases_escalated": 10,
+    "full_intent_accuracy": 0.512,
+    "specific_intent_accuracy": 0.48,
+    "generated_replies_count": 142,
+    "pre_generation_short_circuits": 108,
+    "pre_retrieval_critical_short_circuits": 7,
+    "pre_generation_policy_short_circuits": 101
+  },
+  "summaries": {
+    "top_confusion_pairs": [
+      {
+        "gold_intent": "device_hardware",
+        "pred_intent": "other_unclear",
+        "count": 18
+      },
+      {
+        "gold_intent": "software_update",
+        "pred_intent": "other_unclear",
+        "count": 17
+      },
+      {
+        "gold_intent": "device_hardware",
+        "pred_intent": "software_update",
+        "count": 6
+      },
+      {
+        "gold_intent": "battery_power",
+        "pred_intent": "other_unclear",
+        "count": 6
+      },
+      {
+        "gold_intent": "subscriptions_media",
+        "pred_intent": "other_unclear",
+        "count": 6
+      },
+      {
+        "gold_intent": "repair_service",
+        "pred_intent": "other_unclear",
+        "count": 5
+      },
+      {
+        "gold_intent": "software_update",
+        "pred_intent": "device_hardware",
+        "count": 5
+      },
+      {
+        "gold_intent": "connectivity",
+        "pred_intent": "other_unclear",
+        "count": 4
+      },
+      {
+        "gold_intent": "apple_id_account",
+        "pred_intent": "icloud",
+        "count": 3
+      },
+      {
+        "gold_intent": "security_privacy",
+        "pred_intent": "apple_id_account",
+        "count": 3
+      },
+      {
+        "gold_intent": "device_hardware",
+        "pred_intent": "connectivity",
+        "count": 3
+      },
+      {
+        "gold_intent": "app_store",
+        "pred_intent": "apple_id_account",
+        "count": 2
+      },
+      {
+        "gold_intent": "connectivity",
+        "pred_intent": "software_update",
+        "count": 2
+      },
+      {
+        "gold_intent": "apple_id_account",
+        "pred_intent": "other_unclear",
+        "count": 2
+      },
+      {
+        "gold_intent": "repair_service",
+        "pred_intent": "device_hardware",
+        "count": 2
+      }
+    ],
+    "under_escalation_examples": [
+      {
+        "example_id": "golden_candidate_0035",
+        "customer_message": "@AppleSupport I've tried since I placed my order - it says \"Your order may be ineligible for change online. Contact an Apple Online Store\"",
+        "gold_intent": "orders_delivery",
+        "pred_intent": "orders_delivery",
+        "intent_confidence": 0.9086,
+        "gold_risk": "high",
+        "pred_risk_level": "low",
+        "top_similarity": 0.3782,
+        "target_queue": "self_service",
+        "decision_reasons": [
+          "high_confidence_intent (0.909 >= 0.5)",
+          "strong_retrieval_evidence (0.378 >= 0.35)",
+          "verified_official_self_service_resolution_available"
+        ],
+        "annotation_notes": "Urgent request to modify order shipping address while online change portal and chat are inaccessible.",
+        "verified_reply_text": "We'd be glad to help with this. You can find the steps to resolve this here: https://t.co/8yjRd1Xo0i . Let us know if you need any further assistance!"
+      },
+      {
+        "example_id": "golden_candidate_0039",
+        "customer_message": "Dear @AppleSupport - on my iPhone \"is\" keeps autocorrecting to I.S - I've factory reset the phone but issue persists - help?",
+        "gold_intent": "device_hardware",
+        "pred_intent": "device_hardware",
+        "intent_confidence": 0.5608,
+        "gold_risk": "high",
+        "pred_risk_level": "low",
+        "top_similarity": 0.3611,
+        "target_queue": "self_service",
+        "decision_reasons": [
+          "high_confidence_intent (0.561 >= 0.5)",
+          "strong_retrieval_evidence (0.361 >= 0.35)",
+          "verified_official_self_service_resolution_available"
+        ],
+        "annotation_notes": "Persistent keyboard autocorrect bug ('is' to 'I.S') unresolved by factory reset; input glitch requiring assistance.",
+        "verified_reply_text": "We'd be glad to help with this. You can find the steps to resolve this here: https://t.co/GDrqU22YpT . Let us know if you need any further assistance!"
+      },
+      {
+        "example_id": "golden_candidate_0062",
+        "customer_message": "@AppleSupport I’ve downloaded the suggested software update and my phone is still restarting sporadically",
+        "gold_intent": "device_hardware",
+        "pred_intent": "software_update",
+        "intent_confidence": 0.8627,
+        "gold_risk": "medium",
+        "pred_risk_level": "low",
+        "top_similarity": 0.3512,
+        "target_queue": "self_service",
+        "decision_reasons": [
+          "high_confidence_intent (0.863 >= 0.5)",
+          "strong_retrieval_evidence (0.351 >= 0.35)",
+          "verified_official_self_service_resolution_available"
+        ],
+        "annotation_notes": "Repeated rebooting every 30 seconds persisting despite iOS 11.2 update; hardware/crash investigation needed.",
+        "verified_reply_text": "We'd be glad to help with this. You can find the steps to resolve this here: https://t.co/GDrqU22YpT . Let us know if you need any further assistance!"
+      },
+      {
+        "example_id": "golden_candidate_0066",
+        "customer_message": "@AppleSupport I was trying to run the update from the App Store",
+        "gold_intent": "software_update",
+        "pred_intent": "app_store",
+        "intent_confidence": 0.9791,
+        "gold_risk": "high",
+        "pred_risk_level": "low",
+        "top_similarity": 0.3889,
+        "target_queue": "self_service",
+        "decision_reasons": [
+          "high_confidence_intent (0.979 >= 0.5)",
+          "strong_retrieval_evidence (0.389 >= 0.35)",
+          "verified_official_self_service_resolution_available"
+        ],
+        "annotation_notes": "High Sierra installation failure resulting in locked SSD and failed recovery/Time Machine search.",
+        "verified_reply_text": "We'd be glad to help with this. You can find the steps to resolve this here: https://t.co/GDrqU22YpT . Let us know if you need any further assistance!"
+      },
+      {
+        "example_id": "golden_candidate_0132",
+        "customer_message": "@AppleSupport Your two factor authentication is awful! It makes using the phone very unpleasant. And turning it off is impossible!",
+        "gold_intent": "security_privacy",
+        "pred_intent": "apple_id_account",
+        "intent_confidence": 0.6362,
+        "gold_risk": "high",
+        "pred_risk_level": "low",
+        "top_similarity": 0.3511,
+        "target_queue": "self_service",
+        "decision_reasons": [
+          "high_confidence_intent (0.636 >= 0.5)",
+          "strong_retrieval_evidence (0.351 >= 0.35)",
+          "verified_official_self_service_resolution_available"
+        ],
+        "annotation_notes": "Customer complaining about Two-Factor Authentication and asking to disable it; account security modifications require escalation.",
+        "verified_reply_text": "We'd be glad to help with this. You can find the steps to resolve this here: https://t.co/GDrqU22YpT . Let us know if you need any further assistance!"
+      },
+      {
+        "example_id": "golden_candidate_0193",
+        "customer_message": "The battery drain is real @115858 #ios11 #neverfails",
+        "gold_intent": "battery_power",
+        "pred_intent": "battery_power",
+        "intent_confidence": 0.9959,
+        "gold_risk": "high",
+        "pred_risk_level": "low",
+        "top_similarity": 0.4783,
+        "target_queue": "self_service",
+        "decision_reasons": [
+          "high_confidence_intent (0.996 >= 0.5)",
+          "strong_retrieval_evidence (0.478 >= 0.35)",
+          "verified_official_self_service_resolution_available"
+        ],
+        "annotation_notes": "Severe battery drain on iOS 11 with customer scheduling an in-store Apple Store appointment; unresolved battery degradation.",
+        "verified_reply_text": "We'd be glad to help with this. You can find the steps to resolve this here: https://t.co/bivpdfBNJ6 . Let us know if you need any further assistance!"
+      },
+      {
+        "example_id": "golden_candidate_0208",
+        "customer_message": "@116333 plz do something for iphone 7plus battery. Its getting drained very quickly @AppleSupport @115858 @1542 @16166",
+        "gold_intent": "battery_power",
+        "pred_intent": "battery_power",
+        "intent_confidence": 0.6087,
+        "gold_risk": "high",
+        "pred_risk_level": "low",
+        "top_similarity": 0.4737,
+        "target_queue": "self_service",
+        "decision_reasons": [
+          "high_confidence_intent (0.609 >= 0.5)",
+          "strong_retrieval_evidence (0.474 >= 0.35)",
+          "verified_official_self_service_resolution_available"
+        ],
+        "annotation_notes": "iPhone 7 Plus battery rapidly draining within 3 days of iOS 11.0.3 installation; acute battery degradation requiring diagnostics.",
+        "verified_reply_text": "We'd be glad to help with this. You can find the steps to resolve this here: https://t.co/BGb00taxed . Let us know if you need any further assistance!"
+      },
+      {
+        "example_id": "golden_candidate_0231",
+        "customer_message": "@115858 thanks for all the updates, bit@can we do something about battery life??",
+        "gold_intent": "battery_power",
+        "pred_intent": "battery_power",
+        "intent_confidence": 0.8011,
+        "gold_risk": "high",
+        "pred_risk_level": "medium",
+        "top_similarity": 0.3832,
+        "target_queue": "self_service",
+        "decision_reasons": [
+          "high_confidence_intent (0.801 >= 0.5)",
+          "strong_retrieval_evidence (0.383 >= 0.35)",
+          "verified_official_self_service_resolution_available"
+        ],
+        "annotation_notes": "Clear battery-drain complaint beginning after iOS 11; the customer has not yet tried troubleshooting and AppleSupport moves the case to DM.",
+        "verified_reply_text": "We'd be glad to help with this. You can find the steps to resolve this here: https://t.co/xXaXeeSRt9 . Let us know if you need any further assistance!"
+      }
+    ],
+    "false_escalation_sample": [
+      {
+        "example_id": "golden_candidate_0006",
+        "customer_message": "@AppleSupport Hello! How to change my personal name associated with my apple ID? on the community FAQ sections, it always direct me to how to change apple ID name instead.",
+        "gold_intent": "apple_id_account",
+        "pred_intent": "apple_id_account",
+        "intent_confidence": 0.9678,
+        "gold_risk": "high",
+        "final_action": "ESCALATE",
+        "top_similarity": 0.3839,
+        "decision_reasons": [
+          "lacks_verified_self_service_link_escalated_to_agent",
+          "escalation_engine_pre_generation_short_circuit"
+        ],
+        "annotation_notes": "Customer asking for self-service instructions to change the personal name associated with their Apple ID; appropriate for automated guidance."
+      },
+      {
+        "example_id": "golden_candidate_0015",
+        "customer_message": "@AppleSupport Hello\nI have a question whether the intermittent charging is better for the battery better than the full charge",
+        "gold_intent": "battery_power",
+        "pred_intent": "battery_power",
+        "intent_confidence": 0.7948,
+        "gold_risk": "high",
+        "final_action": "ESCALATE",
+        "top_similarity": 0.2714,
+        "decision_reasons": [
+          "retrieval_similarity_below_threshold (0.271 < 0.35)",
+          "uncertain_technical_inquiry_escalated",
+          "escalation_engine_pre_generation_short_circuit"
+        ],
+        "annotation_notes": "Informational inquiry regarding battery charging habits and device health; suitable for an automated knowledge-grounded response."
+      },
+      {
+        "example_id": "golden_candidate_0024",
+        "customer_message": "@AppleSupport who's bright fucking idea was it to make the process for 'forgot password' to enter the password I forgot. Are you stupid???",
+        "gold_intent": "apple_id_account",
+        "pred_intent": "apple_id_account",
+        "intent_confidence": 0.5097,
+        "gold_risk": "high",
+        "final_action": "ESCALATE",
+        "top_similarity": 0.285,
+        "decision_reasons": [
+          "retrieval_similarity_below_threshold (0.285 < 0.35)",
+          "uncertain_technical_inquiry_escalated",
+          "escalation_engine_pre_generation_short_circuit"
+        ],
+        "annotation_notes": "Frustration with password reset recovery flow; suitable for automated password recovery guidance."
+      },
+      {
+        "example_id": "golden_candidate_0026",
+        "customer_message": "@AppleSupport Since last night - no, it says “searching” and occasionally says “no service”",
+        "gold_intent": "connectivity",
+        "pred_intent": "connectivity",
+        "intent_confidence": 0.6547,
+        "gold_risk": "high",
+        "final_action": "ESCALATE",
+        "top_similarity": 0.3295,
+        "decision_reasons": [
+          "retrieval_similarity_below_threshold (0.330 < 0.35)",
+          "uncertain_technical_inquiry_escalated",
+          "escalation_engine_pre_generation_short_circuit"
+        ],
+        "annotation_notes": "iPhone displaying 'searching' / 'no service' cellular connection issue; standard self-service troubleshooting applies."
+      },
+      {
+        "example_id": "golden_candidate_0034",
+        "customer_message": "@AppleSupport 11.0.3. Took maybe an hour to recover all photos. Thought it might have been quicker. Is there a setting I can turn off to stop it happening",
+        "gold_intent": "icloud",
+        "pred_intent": "how_to_information",
+        "intent_confidence": 0.3173,
+        "gold_risk": "high",
+        "final_action": "ASK_CLARIFICATION",
+        "top_similarity": 0.2232,
+        "decision_reasons": [
+          "intent_confidence_below_threshold (0.317 < 0.5)",
+          "retrieval_similarity_below_threshold (0.223 < 0.35)",
+          "vague_inquiry_requested_clarification"
+        ],
+        "annotation_notes": "Customer inquiring about photo recovery time and settings; photo/backup data issue suitable for automated guidance."
+      },
+      {
+        "example_id": "golden_candidate_0037",
+        "customer_message": "@AppleSupport I turned it off through control center. I’ll go back and see it back on or if I reset my phone. I’m on 11.0.2",
+        "gold_intent": "connectivity",
+        "pred_intent": "connectivity",
+        "intent_confidence": 0.3892,
+        "gold_risk": "high",
+        "final_action": "ASK_CLARIFICATION",
+        "top_similarity": 0.3035,
+        "decision_reasons": [
+          "intent_confidence_below_threshold (0.389 < 0.5)",
+          "retrieval_similarity_below_threshold (0.303 < 0.35)",
+          "vague_inquiry_requested_clarification"
+        ],
+        "annotation_notes": "Wi-Fi and Bluetooth automatically toggling on in Control Center; standard iOS 11 behavior explanation."
+      },
+      {
+        "example_id": "golden_candidate_0040",
+        "customer_message": "@AppleSupport do u send email like this one? PS, this ain’t the email linked to my Apple ID🙄 https://t.co/jiFaPlLdfC",
+        "gold_intent": "security_privacy",
+        "pred_intent": "apple_id_account",
+        "intent_confidence": 0.8209,
+        "gold_risk": "high",
+        "final_action": "ESCALATE",
+        "top_similarity": 0.4113,
+        "decision_reasons": [
+          "lacks_verified_self_service_link_escalated_to_agent",
+          "escalation_engine_pre_generation_short_circuit"
+        ],
+        "annotation_notes": "Inquiry verifying legitimacy of a suspicious email; confirmed phishing attempt resolvable with standard security guidance."
+      },
+      {
+        "example_id": "golden_candidate_0042",
+        "customer_message": "Hey @115858 - how about adding a feature to the #Health app where you can keep track of medication and check off when you’ve taken it?  I’d find that very useful, and so would a lot of other people, I think!  Or is there a way to do this already?  @AppleSupport",
+        "gold_intent": "how_to_information",
+        "pred_intent": "how_to_information",
+        "intent_confidence": 0.7986,
+        "gold_risk": "low",
+        "final_action": "ESCALATE",
+        "top_similarity": 0.2564,
+        "decision_reasons": [
+          "retrieval_similarity_below_threshold (0.256 < 0.35)",
+          "uncertain_technical_inquiry_escalated",
+          "escalation_engine_pre_generation_short_circuit"
+        ],
+        "annotation_notes": "Feature feedback and general informational inquiry regarding Health app medication tracking."
+      },
+      {
+        "example_id": "golden_candidate_0047",
+        "customer_message": "@AppleSupport I was able to unlock, change my password, log out of all other icloud sessions somehow. what would have caused the issue I was having?",
+        "gold_intent": "apple_id_account",
+        "pred_intent": "icloud",
+        "intent_confidence": 0.3855,
+        "gold_risk": "high",
+        "final_action": "ASK_CLARIFICATION",
+        "top_similarity": 0.2371,
+        "decision_reasons": [
+          "intent_confidence_below_threshold (0.385 < 0.5)",
+          "retrieval_similarity_below_threshold (0.237 < 0.35)",
+          "vague_inquiry_requested_clarification"
+        ],
+        "annotation_notes": "Post-recovery inquiry about cause of account lockout; issue already self-resolved by customer."
+      },
+      {
+        "example_id": "golden_candidate_0050",
+        "customer_message": "@AppleSupport since upgrading to High Sierra my Mac Pro only shows black screens after power saving when woken up again. No login screen.",
+        "gold_intent": "device_hardware",
+        "pred_intent": "device_hardware",
+        "intent_confidence": 0.4328,
+        "gold_risk": "high",
+        "final_action": "ASK_CLARIFICATION",
+        "top_similarity": 0.3485,
+        "decision_reasons": [
+          "intent_confidence_below_threshold (0.433 < 0.5)",
+          "retrieval_similarity_below_threshold (0.348 < 0.35)",
+          "vague_inquiry_requested_clarification"
+        ],
+        "annotation_notes": "Mac Pro displays black screen upon waking from sleep; resolved via standard PRAM/NVRAM reset."
+      }
+    ],
+    "lowest_retrieval_quality_cases": [
+      {
+        "example_id": "golden_candidate_0020",
+        "customer_message": "@115858 says my iPhone 7 Plus has not been hacked, but these photos were taken while I was on the phone w/their Sr. Rep. Definitely #hacked! https://t.co/njikfIcg6t",
+        "gold_intent": "security_privacy",
+        "pred_intent": "security_privacy",
+        "top_similarity": 0.0,
+        "sufficiency": "unknown",
+        "final_action": "ESCALATE"
+      },
+      {
+        "example_id": "golden_candidate_0057",
+        "customer_message": "@115858 I️ think you guys have been hacked I’ve NEVER had this many issues with a iPhone EVER.... 🤦🏾‍♂️",
+        "gold_intent": "security_privacy",
+        "pred_intent": "security_privacy",
+        "top_similarity": 0.0,
+        "sufficiency": "unknown",
+        "final_action": "ESCALATE"
+      },
+      {
+        "example_id": "golden_candidate_0104",
+        "customer_message": "@ATT @AppleSupport @115858 https://t.co/e3gs0IMTUR",
+        "gold_intent": "orders_delivery",
+        "pred_intent": "other_unclear",
+        "top_similarity": 0.0,
+        "sufficiency": "empty",
+        "final_action": "ASK_CLARIFICATION"
+      },
+      {
+        "example_id": "golden_candidate_0109",
+        "customer_message": "@AppleSupport @67109 @505673",
+        "gold_intent": "other_unclear",
+        "pred_intent": "other_unclear",
+        "top_similarity": 0.0,
+        "sufficiency": "empty",
+        "final_action": "ASK_CLARIFICATION"
+      },
+      {
+        "example_id": "golden_candidate_0111",
+        "customer_message": "@AppleSupport",
+        "gold_intent": "other_unclear",
+        "pred_intent": "other_unclear",
+        "top_similarity": 0.0,
+        "sufficiency": "empty",
+        "final_action": "ASK_CLARIFICATION"
+      },
+      {
+        "example_id": "golden_candidate_0120",
+        "customer_message": "@AppleSupport ????",
+        "gold_intent": "device_hardware",
+        "pred_intent": "other_unclear",
+        "top_similarity": 0.0,
+        "sufficiency": "empty",
+        "final_action": "ASK_CLARIFICATION"
+      },
+      {
+        "example_id": "golden_candidate_0163",
+        "customer_message": "Hmmm. I've updated to iOS 11.1 but my emojis haven't updated. Any bright sparks know why? @AppleSupport?",
+        "gold_intent": "software_update",
+        "pred_intent": "other_unclear",
+        "top_similarity": 0.0,
+        "sufficiency": "unknown",
+        "final_action": "ESCALATE"
+      },
+      {
+        "example_id": "golden_candidate_0168",
+        "customer_message": "@AppleSupport so my iPhone charger literally became so hot that it melted the plug covering and the charger wires sparked. What's up ?",
+        "gold_intent": "battery_power",
+        "pred_intent": "battery_power",
+        "top_similarity": 0.0,
+        "sufficiency": "unknown",
+        "final_action": "ESCALATE"
+      },
+      {
+        "example_id": "golden_candidate_0177",
+        "customer_message": "As much as I love @115858 I’m about to switch... my @118721 account has been hacked for MONTHS!! I’m so pissed. So much money stolen.",
+        "gold_intent": "security_privacy",
+        "pred_intent": "security_privacy",
+        "top_similarity": 0.0,
+        "sufficiency": "unknown",
+        "final_action": "ESCALATE"
+      },
+      {
+        "example_id": "golden_candidate_0186",
+        "customer_message": "Is anyone else’s iPhone making a high pitched alarm noise? It sounds like a smoke detector but from the speaker of my phone? @AppleSupport",
+        "gold_intent": "device_hardware",
+        "pred_intent": "device_hardware",
+        "top_similarity": 0.0,
+        "sufficiency": "unknown",
+        "final_action": "ESCALATE"
+      }
+    ],
+    "reply_template_distribution": [
+      {
+        "template": "We'd like to look into this with you. Could you let us know your exact device model and iOS version? You can also meet us in DM with additional details so we can help.",
+        "count": 126,
+        "share": 0.8873
+      },
+      {
+        "template": "We'd be glad to help with this. You can find the steps to resolve this here: https://t.co/GDrqU22YpT . Let us know if you need any further assistance!",
+        "count": 7,
+        "share": 0.0493
+      },
+      {
+        "template": "We'd be glad to help with this. You can find the steps to resolve this here: https://t.co/xXaXeeSRt9 . Let us know if you need any further assistance!",
+        "count": 3,
+        "share": 0.0211
+      },
+      {
+        "template": "We'd be glad to help with this. You can find the steps to resolve this here: https://t.co/SDIe7UiyJN . Let us know if you need any further assistance!",
+        "count": 1,
+        "share": 0.007
+      },
+      {
+        "template": "We'd be glad to help with this. You can find the steps to resolve this here: https://t.co/8yjRd1Xo0i . Let us know if you need any further assistance!",
+        "count": 1,
+        "share": 0.007
+      },
+      {
+        "template": "We'd be glad to help with this. You can find the steps to resolve this here: https://t.co/F1QfwW1u1N . Let us know if you need any further assistance!",
+        "count": 1,
+        "share": 0.007
+      },
+      {
+        "template": "We'd be glad to help with this. You can find the steps to resolve this here: https://t.co/uQeXsrrlXJ . Let us know if you need any further assistance!",
+        "count": 1,
+        "share": 0.007
+      },
+      {
+        "template": "We'd be glad to help with this. You can find the steps to resolve this here: https://t.co/bivpdfBNJ6 . Let us know if you need any further assistance!",
+        "count": 1,
+        "share": 0.007
+      },
+      {
+        "template": "We'd be glad to help with this. You can find the steps to resolve this here: https://t.co/BGb00taxed . Let us know if you need any further assistance!",
+        "count": 1,
+        "share": 0.007
+      }
+    ],
+    "context_audit": {
+      "total_golden": 250,
+      "threads_with_gt_1_turn": 250,
+      "evaluated_message_turn_0": 154,
+      "evaluated_message_turn_gt_0": 96,
+      "intent_errors_total": 122,
+      "intent_errors_with_anaphora": 66,
+      "intent_errors_with_anaphora_and_prior_context": 29,
+      "intent_errors_with_anaphora_turn_0": 37
+    }
+  },
+  "failure_modes": [
+    {
+      "mode_id": 1,
+      "name": "Under-Escalation on High-Risk / Complex Technical Requests (Dangerous False Self-Service)",
+      "impact_priority": "CRITICAL (Safety, Security & Brand Trust)",
+      "measured_frequency": {
+        "count": 8,
+        "total_gold_escalate": 180,
+        "under_escalation_rate": 0.0444
+      },
+      "examples": [
+        {
+          "example_id": "golden_candidate_0035",
+          "customer_message": "@AppleSupport I've tried since I placed my order - it says \"Your order may be ineligible for changes online\" and your chat line is unavailable.",
+          "gold_intent": "orders_delivery",
+          "gold_action": "ESCALATE",
+          "gold_risk": "high",
+          "pred_intent": "orders_delivery",
+          "intent_confidence": 0.909,
+          "pred_action": "AUTO_HANDLE",
+          "top_similarity": 0.378,
+          "retrieved_url": "https://t.co/8yjRd1Xo0i",
+          "generated_reply": "We'd be glad to help with this. You can find the steps to resolve this here: https://t.co/8yjRd1Xo0i . Let us know if you need any further assistance!",
+          "annotation_notes": "Urgent request to modify order shipping address while online change portal and chat are unavailable; requires live human support."
+        },
+        {
+          "example_id": "golden_candidate_0132",
+          "customer_message": "@AppleSupport Your two factor authentication is awful! It makes using the phone very unpleasant. And turning it off is impossible!",
+          "gold_intent": "security_privacy",
+          "gold_action": "ESCALATE",
+          "gold_risk": "high",
+          "pred_intent": "apple_id_account",
+          "intent_confidence": 0.636,
+          "pred_action": "AUTO_HANDLE",
+          "top_similarity": 0.351,
+          "retrieved_url": "https://t.co/GDrqU22YpT",
+          "generated_reply": "We'd be glad to help with this. You can find the steps to resolve this here: https://t.co/GDrqU22YpT . Let us know if you need any further assistance!",
+          "annotation_notes": "Customer complaining about Two-Factor Authentication and asking to disable it; account security modifications require escalation."
+        },
+        {
+          "example_id": "golden_candidate_0062",
+          "customer_message": "@AppleSupport I’ve downloaded the suggested software update and my phone is still restarting every 30 seconds",
+          "gold_intent": "device_hardware",
+          "gold_action": "ESCALATE",
+          "gold_risk": "medium",
+          "pred_intent": "software_update",
+          "intent_confidence": 0.863,
+          "pred_action": "AUTO_HANDLE",
+          "top_similarity": 0.351,
+          "retrieved_url": "https://t.co/GDrqU22YpT",
+          "generated_reply": "We'd be glad to help with this. You can find the steps to resolve this here: https://t.co/GDrqU22YpT . Let us know if you need any further assistance!",
+          "annotation_notes": "Repeated rebooting every 30 seconds persisting despite iOS 11.2 update; hardware/crash investigation required."
+        }
+      ],
+      "root_cause_hypothesis": "The escalation policy permits AUTO_HANDLE whenever intent confidence >= 0.50, retrieval similarity >= 0.35, and an extracted evidence URL exists, unless an explicit critical-hazard keyword fires. The system lacks semantic guards for: (a) explicit customer statements that self-service or online tools have already failed, (b) sensitive account security boundaries (e.g. 2FA disabling), and (c) recurring hardware reboot loops.",
+      "one_more_week_mitigation": "1. Implement a negative-intent escalation guard regex detecting statements of prior failure (e.g., 'already tried', 'ineligible.*online', 'chat.*unavailable', 'still restarting').\n2. Classify 2FA/credential alteration requests as high-risk security boundaries requiring human escalation.\n3. Require customer confirmation before auto-resolving hardware issues that mention recurring bootloops."
+    },
+    {
+      "mode_id": 2,
+      "name": "Over-Conservative Withholding & False Escalation of Automatable Self-Service Queries",
+      "impact_priority": "HIGH (Operational Efficiency & Automation Deficit)",
+      "measured_frequency": {
+        "count": 62,
+        "total_gold_auto": 70,
+        "false_escalation_rate": 0.8857,
+        "diverted_to_clarification": 38,
+        "diverted_to_escalate": 24
+      },
+      "examples": [
+        {
+          "example_id": "golden_candidate_0006",
+          "customer_message": "@AppleSupport Hello! How to change my personal name associated with my apple ID? on the community FAQ sections, it always direct me to how to change apple ID name instead.",
+          "gold_intent": "apple_id_account",
+          "gold_action": "AUTO_HANDLE",
+          "gold_risk": "high",
+          "pred_intent": "apple_id_account",
+          "intent_confidence": 0.968,
+          "pred_action": "ESCALATE",
+          "top_similarity": 0.384,
+          "decision_reasons": "lacks_verified_self_service_link_escalated_to_agent; escalation_engine_pre_generation_short_circuit",
+          "annotation_notes": "Customer asking for self-service instructions to change personal name associated with Apple ID; appropriate for automated guidance."
+        },
+        {
+          "example_id": "golden_candidate_0015",
+          "customer_message": "@AppleSupport Hello\nI have a question whether the intermittent charging is better for the battery better than the full charge",
+          "gold_intent": "battery_power",
+          "gold_action": "AUTO_HANDLE",
+          "gold_risk": "high",
+          "pred_intent": "battery_power",
+          "intent_confidence": 0.795,
+          "pred_action": "ESCALATE",
+          "top_similarity": 0.271,
+          "decision_reasons": "retrieval_similarity_below_threshold (0.271 < 0.35); uncertain_technical_inquiry_escalated",
+          "annotation_notes": "Informational inquiry regarding battery charging habits and device health; suitable for automated knowledge-grounded response."
+        },
+        {
+          "example_id": "golden_candidate_0026",
+          "customer_message": "@AppleSupport Since last night - no, it says 'searching' and occasionally says 'no service'",
+          "gold_intent": "connectivity",
+          "gold_action": "AUTO_HANDLE",
+          "gold_risk": "high",
+          "pred_intent": "connectivity",
+          "intent_confidence": 0.655,
+          "pred_action": "ESCALATE",
+          "top_similarity": 0.33,
+          "decision_reasons": "retrieval_similarity_below_threshold (0.330 < 0.35); uncertain_technical_inquiry_escalated",
+          "annotation_notes": "iPhone displaying 'searching' / 'no service' cellular connection issue; standard self-service troubleshooting applies."
+        }
+      ],
+      "root_cause_hypothesis": "Dual rigid gates suppress self-service resolution: (1) requiring an extracted URL link in evidence forces escalation even when confidence is near-certain (e.g. 0.968 in candidate 0006) and text steps exist; (2) rigid 0.35 TF-IDF cosine similarity cutoff rejects conceptual or conversational queries that lack exact keyword overlap (e.g. battery charging best practices at 0.271).",
+      "one_more_week_mitigation": "1. Permit grounded text-only self-service replies for high-confidence predictions (>= 0.80) when evidence similarity is >= 0.30, even without an extracted link.\n2. Lower the similarity gating threshold from 0.35 to 0.30 for top informational intents (battery_power, how_to_information).\n3. Implement semantic dense bi-encoder embeddings (e.g. all-MiniLM-L6-v2) to capture paraphrased technical questions."
+    },
+    {
+      "mode_id": 3,
+      "name": "Monolithic Clarification Loop & Premature Triage Trap (Static Canned Responses)",
+      "impact_priority": "HIGH (Customer Experience & Dialogue Friction)",
+      "measured_frequency": {
+        "clarification_actions_count": 126,
+        "clarification_share_of_golden": 0.504,
+        "clarification_share_of_generated": 0.8873,
+        "unique_templates_used": 9,
+        "static_canned_reply_count": 126
+      },
+      "examples": [
+        {
+          "example_id": "golden_candidate_0191",
+          "customer_message": "@AppleSupport Yes we are but this is not working. Will not take husbands CC credentials on an iPhone 6s. Now none of us can update even free apps",
+          "gold_intent": "billing_payments",
+          "gold_action": "ESCALATE",
+          "gold_risk": "high",
+          "pred_intent": "app_store",
+          "intent_confidence": 0.269,
+          "pred_action": "ASK_CLARIFICATION",
+          "generated_reply": "We'd like to look into this with you. Could you let us know your exact device model and iOS version? You can also meet us in DM with additional details so we can help.",
+          "flaw": "Customer explicitly stated 'on an iPhone 6s'; the agent blindly asks for their exact device model."
+        },
+        {
+          "example_id": "golden_candidate_0001",
+          "customer_message": "@AppleSupport When trying to install free apps on an iPhone 6s I had to finish the setup of the Apple ID and enter payment info which I can't do without a CC",
+          "gold_intent": "app_store",
+          "gold_action": "ESCALATE",
+          "gold_risk": "high",
+          "pred_intent": "apple_id_account",
+          "intent_confidence": 0.316,
+          "pred_action": "ASK_CLARIFICATION",
+          "generated_reply": "We'd like to look into this with you. Could you let us know your exact device model and iOS version? You can also meet us in DM with additional details so we can help.",
+          "flaw": "Customer explicitly stated 'on an iPhone 6s'; the template requests device information already provided in the opening sentence."
+        },
+        {
+          "example_id": "golden_candidate_0025",
+          "customer_message": "@AppleSupport Hi, guys. It’s me again. I bought my old work computer. It was wiped. It turns on but gives me a password hint that doesn’t work, so I can’t get it open. Ideas? Thanks!",
+          "gold_intent": "apple_id_account",
+          "gold_action": "ESCALATE",
+          "gold_risk": "high",
+          "pred_intent": "other_unclear",
+          "intent_confidence": 0.232,
+          "pred_action": "ASK_CLARIFICATION",
+          "generated_reply": "We'd like to look into this with you. Could you let us know your exact device model and iOS version? You can also meet us in DM with additional details so we can help.",
+          "flaw": "Inquiry is regarding a work computer / Mac; the canned mobile triage prompt inappropriately asks for an iOS version."
+        }
+      ],
+      "root_cause_hypothesis": "The offline reply generator uses a single unparameterized CLARIFICATION_TEMPLATE whenever retrieval_status is weak or confidence is low. There is zero entity/slot extraction for device type or operating system before formulating the clarification request.",
+      "one_more_week_mitigation": "1. Implement regex entity extractors for hardware ('iPhone 6s', 'Mac', 'iPad', 'Apple Watch') and OS ('High Sierra', 'iOS 11').\n2. Condition clarification prompts on missing slots: if device model is present, ask only for OS version or specific error codes.\n3. Branch clarification templates by platform: ask for macOS version on Mac queries rather than iOS version."
+    },
+    {
+      "mode_id": 4,
+      "name": "Link Validity Degradation & Repurposing of Ephemeral Twitter DM Shortlinks",
+      "impact_priority": "HIGH (Grounding Fidelity & Citation Integrity)",
+      "measured_frequency": {
+        "auto_handle_replies_count": 16,
+        "auto_replies_using_t_co_links": 16,
+        "auto_replies_t_co_share": 1.0,
+        "initial_borderline_or_insufficient_retrieval_count": 139,
+        "retry_borderline_upgrade_rate": 0.0388
+      },
+      "examples": [
+        {
+          "example_id": "golden_candidate_0066",
+          "customer_message": "@AppleSupport I was trying to run the update from the App Store",
+          "gold_intent": "software_update",
+          "gold_action": "ESCALATE",
+          "gold_risk": "high",
+          "pred_intent": "app_store",
+          "intent_confidence": 0.979,
+          "pred_action": "AUTO_HANDLE",
+          "top_similarity": 0.389,
+          "retrieved_evidence_id": "res_apple_086522_599071_599073",
+          "retrieved_url": "https://t.co/GDrqU22YpT",
+          "generated_reply": "We'd be glad to help with this. You can find the steps to resolve this here: https://t.co/GDrqU22YpT . Let us know if you need any further assistance!",
+          "flaw": "Reply promises 'steps to resolve this here', but links to a Twitter DM invitation link."
+        },
+        {
+          "example_id": "golden_candidate_0039",
+          "customer_message": "Dear @AppleSupport - on my iPhone \"is\" keeps autocorrecting to I.S - I've factory reset the phone and it didn't help. Is this an iOS 11 bug?",
+          "gold_intent": "device_hardware",
+          "gold_action": "ESCALATE",
+          "gold_risk": "high",
+          "pred_intent": "device_hardware",
+          "intent_confidence": 0.561,
+          "pred_action": "AUTO_HANDLE",
+          "top_similarity": 0.361,
+          "retrieved_url": "https://t.co/GDrqU22YpT",
+          "generated_reply": "We'd be glad to help with this. You can find the steps to resolve this here: https://t.co/GDrqU22YpT . Let us know if you need any further assistance!",
+          "flaw": "Lexical keyword hit on 'iPhone' and 'iOS' pairs autocorrect bug with historical DM invitation."
+        },
+        {
+          "example_id": "golden_candidate_0193",
+          "customer_message": "The battery drain is real @115858 #ios11 #neverfails",
+          "gold_intent": "battery_power",
+          "gold_action": "ESCALATE",
+          "gold_risk": "high",
+          "pred_intent": "battery_power",
+          "intent_confidence": 0.996,
+          "pred_action": "AUTO_HANDLE",
+          "top_similarity": 0.478,
+          "retrieved_url": "https://t.co/bivpdfBNJ6",
+          "generated_reply": "We'd be glad to help with this. You can find the steps to resolve this here: https://t.co/bivpdfBNJ6 . Let us know if you need any further assistance!",
+          "flaw": "Shortened t.co URL from historical tweet used as autonomous self-service guidance."
+        }
+      ],
+      "measured_facts_vs_hypothesis": {
+        "measured_facts": "16 of 16 AUTO_HANDLE replies (100.0%) cite raw Twitter 't.co' shortlinks extracted from historical agent tweets. In 7 of those 16 cases, the exact link cited is 'https://t.co/GDrqU22YpT' (a Twitter DM invite link). Zero AUTO_HANDLE replies cite canonical 'support.apple.com' documentation.",
+        "root_cause_hypothesis": "TF-IDF lexical retrieval matches high-frequency brand tokens (e.g. '@AppleSupport', 'iPhone', 'iOS 11') rather than exact troubleshooting content. The programmatic URL verification guard checks that the URL exists verbatim in retrieved evidence, but fails to distinguish canonical documentation URLs from ephemeral conversational shortlinks."
+      },
+      "one_more_week_mitigation": "1. Enforce strict domain whitelisting on evidence URLs (permitting only support.apple.com, appleid.apple.com, getsupport.apple.com); strip or reject t.co shortlinks.\n2. When evidence contains only a DM link, route the case to ASK_CLARIFICATION or agent escalation instead of claiming steps exist.\n3. Enhance retrieval index by indexing curated Apple Knowledge Base articles rather than raw historical tweet replies."
+    },
+    {
+      "mode_id": 5,
+      "name": "Conversational Anaphora & Context Boundary Deficit in Multi-Turn Threads",
+      "impact_priority": "MEDIUM-HIGH (Intent Diagnostic Accuracy & Contextual Grounding)",
+      "measured_frequency": {
+        "total_golden_examples": 250,
+        "examples_in_threads_gt_1_turn": 250,
+        "examples_in_threads_gt_1_share": 1.0,
+        "examples_with_prior_context_available": 96,
+        "examples_with_prior_context_share": 0.384,
+        "examples_as_first_turn_no_prior_context": 154,
+        "examples_as_first_turn_share": 0.616,
+        "total_intent_misclassifications": 122,
+        "misclassifications_with_anaphoric_markers": 66,
+        "misclassifications_anaphora_with_prior_context": 29,
+        "misclassifications_anaphora_at_turn_0": 37
+      },
+      "examples": [
+        {
+          "example_id": "golden_candidate_0017",
+          "turn_index": 2,
+          "thread_turns": 5,
+          "customer_message": "@AppleSupport yeah i know, it asks for a user and a passwort, like a remote login or something, but why did it appear all of a sudden?\nbecause i used ssh once? :D",
+          "gold_intent": "security_privacy",
+          "gold_action": "ESCALATE",
+          "gold_risk": "critical",
+          "pred_intent": "other_unclear",
+          "intent_confidence": 0.127,
+          "pred_action": "ASK_CLARIFICATION",
+          "prior_context_snippet": "[customer] my mac just pulled a microsoft and updated straight after power on, now i have this new user on my laptop, is this normal or what is going on? D: https://t.co/LqlkV1Btzg",
+          "analysis": "Single-turn message has pronoun 'it' and colloquial spelling ('passwort'); antecedent context in turn 1 clearly establishes unauthorized new user login screen after update."
+        },
+        {
+          "example_id": "golden_candidate_0034",
+          "turn_index": 2,
+          "thread_turns": 4,
+          "customer_message": "@AppleSupport 11.0.3. Took maybe an hour to recover all photos. Thought it might have been quicker. Is there a setting I can turn off to stop it happening",
+          "gold_intent": "icloud",
+          "gold_action": "AUTO_HANDLE",
+          "gold_risk": "high",
+          "pred_intent": "how_to_information",
+          "intent_confidence": 0.317,
+          "pred_action": "ASK_CLARIFICATION",
+          "prior_context_snippet": "[customer] @AppleSupport ios11 not letting me recover photos to be deleted. How do I solve this? [AppleSupport] @247114 What version of iOS 11 are you on?",
+          "analysis": "Message contains 'it might have been quicker' and 'stop it happening'; antecedent turn establishes that 'it' refers to iCloud photo recovery."
+        },
+        {
+          "example_id": "golden_candidate_0059",
+          "turn_index": 3,
+          "thread_turns": 6,
+          "customer_message": "@AppleSupport Updated apps reset device still very glitchy",
+          "gold_intent": "device_hardware",
+          "gold_action": "ESCALATE",
+          "gold_risk": "high",
+          "pred_intent": "other_unclear",
+          "intent_confidence": 0.223,
+          "pred_action": "ASK_CLARIFICATION",
+          "prior_context_snippet": "[customer] @AppleSupport Please get back to your roots and make the iPhone reliable. I’m ready to ditch it! [AppleSupport] What kind of issues are you having?",
+          "analysis": "Message uses 'still very glitchy'; antecedent turns show ongoing complaints about persistent hardware/UI freezing."
+        }
+      ],
+      "measured_facts_vs_hypothesis": {
+        "measured_facts": "1. Thread Breadth: Exactly 250 of 250 Golden examples (100.0%) belong to conversation threads with length > 1 (mean thread length = 4.1 turns).\n2. Context Availability: In 96 of 250 cases (38.40%), the evaluated customer message is a subsequent turn with preceding conversational context available in the thread. In the remaining 154 cases (61.60%), the evaluated message is Turn 0 (first inbound tweet, no prior context).\n3. Anaphoric Density: Among 122 intent misclassifications, exactly 66 (54.10%) contain anaphoric markers ('it', 'this', 'that', 'still', 'again').\n4. Resolvable Subset: Of those 66 anaphoric misclassifications, exactly 29 cases (23.77% of all intent errors) had prior conversational context available in the thread, while 37 occurred at Turn 0 without prior Twitter thread history.",
+        "root_cause_hypothesis": "Single-turn inference isolates queries from conversational referents, which plausibly depresses classifier confidence and triggers abstention to other_unclear on multi-turn replies. However, causal improvement from thread context remains an unmeasured hypothesis until experimentally evaluated on this subset."
+      },
+      "one_more_week_mitigation": "1. Extend AgentController.process_query to accept an optional conversation_history parameter.\n2. When preceding turns are present, prepend prior customer/agent turns with turn boundary tokens before TF-IDF vectorization.\n3. Experimentally benchmark intent classification accuracy with and without multi-turn thread history on the 96 multi-turn Golden examples."
+    }
+  ]
+}

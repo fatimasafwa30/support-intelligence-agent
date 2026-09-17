@@ -1,0 +1,12 @@
+{
+  "name": "hiver-support-decision-console",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "lint": "node --check app.js && node --check view.js && node --check build.mjs",
+    "test": "node --test tests/*.test.js",
+    "build": "node build.mjs"
+  },
+  "engines": {"node": ">=20"}
+}

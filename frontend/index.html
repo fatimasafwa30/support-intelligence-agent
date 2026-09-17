@@ -1,0 +1,496 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f2ec">
+  <title>Support Intelligence / Hiver</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script type="module" src="/app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#message">Skip to customer message</a>
+  <header class="masthead">
+    <div class="brand-group">
+      <a class="brand" href="/" aria-label="Support Intelligence home">hiver<span class="brand-divider"></span><span>Support intelligence</span></a>
+      <nav class="view-tabs" role="tablist" aria-label="Console Views">
+        <button class="tab-button active" role="tab" id="tab-console" aria-selected="true" aria-controls="panel-console" data-tab="console">Agent Console</button>
+        <button class="tab-button" role="tab" id="tab-evaluation" aria-selected="false" aria-controls="panel-evaluation" data-tab="evaluation">Evaluation Benchmark</button>
+        <button class="tab-button" role="tab" id="tab-failure-lab" aria-selected="false" aria-controls="panel-failure-lab" data-tab="failure-lab">Failure Lab (5 Modes)</button>
+      </nav>
+    </div>
+    <div class="connection">
+      <span class="edition">LOCAL WORKSPACE / 01</span>
+      <span id="health" role="status">Connecting…</span>
+      <button id="reconnect" class="text-button" hidden>Reconnect</button>
+    </div>
+  </header>
+
+  <main id="workspace">
+    <!-- VIEW 1: INTERACTIVE AGENT CONSOLE -->
+    <div id="panel-console" role="tabpanel" aria-labelledby="tab-console" class="tab-panel active">
+      <section class="composer" aria-labelledby="composer-title">
+        <div class="composer-heading">
+          <span class="eyebrow">DECISION CONSOLE</span>
+          <h1 id="composer-title">Customer message</h1>
+        </div>
+        <div class="composer-work">
+          <form id="analyze-form">
+            <label for="message" class="sr-only">Customer support message</label>
+            <textarea id="message" rows="2" maxlength="4000" required aria-describedby="input-help" placeholder="What does the customer need help with?"></textarea>
+            <div class="composer-footer">
+              <span id="input-help">Local inference · No messages saved <span class="shortcut">⌘ / Ctrl + Enter</span></span>
+              <button id="analyze" class="primary" type="submit" disabled>Analyze message <span aria-hidden="true">↗</span></button>
+            </div>
+          </form>
+          <div class="demo-row">
+            <span>SYNTHETIC DEMOS</span>
+            <div id="demos" aria-label="Synthetic demo prompts"></div>
+          </div>
+        </div>
+      </section>
+
+      <div id="request-status" role="status" aria-live="polite"></div>
+      <div id="connection-notice" class="connection-notice" role="status" hidden></div>
+      <div id="error" role="alert" hidden></div>
+      <section id="results" aria-label="Agent analysis" hidden></section>
+
+      <section id="empty" class="empty" aria-labelledby="empty-title">
+        <div class="section-heading">
+          <span class="eyebrow">DECISION TRACE</span>
+          <span class="quiet">Observable signals. Explicit boundaries.</span>
+        </div>
+        <ol aria-label="Decision stages" class="trace trace-idle">
+          <li><span class="trace-node">01</span><h2>Understand</h2><p>Intent + confidence</p></li>
+          <li><span class="trace-node">02</span><h2>Assess risk</h2><p>Safety + security</p></li>
+          <li><span class="trace-node">03</span><h2>Retrieve</h2><p>Historical resolutions</p></li>
+          <li><span class="trace-node">04</span><h2>Verify</h2><p>Reply + citations</p></li>
+          <li><span class="trace-node">05</span><h2>Decide</h2><p>Response or handoff</p></li>
+        </ol>
+        <div class="outcome-guide" aria-label="Three policy outcomes">
+          <div><strong>01 / Auto-handle</strong><p>Inspect the evidence and customer response selected for automation.</p></div>
+          <div><strong>02 / Ask clarification</strong><p>See when the controller withholds a resolution and requests context.</p></div>
+          <div><strong>03 / Escalate</strong><p>Inspect the policy boundary and the recommended human queue.</p></div>
+        </div>
+        <div class="empty-canvas">
+          <span class="empty-glyph" aria-hidden="true">↳</span>
+          <div>
+            <h2 id="empty-title">Evidence before automation.</h2>
+            <p>Analyze an inquiry to inspect the controller’s observed path.<br>When policy requires a person, automation stops.</p>
+          </div>
+          <span class="empty-index">AWAITING<br>ANALYSIS</span>
+        </div>
+      </section>
+    </div>
+
+    <!-- VIEW 2: EVALUATION BENCHMARK -->
+    <div id="panel-evaluation" role="tabpanel" aria-labelledby="tab-evaluation" class="tab-panel" hidden>
+      <section class="eval-view" aria-labelledby="eval-title">
+        <div class="panel-header">
+          <div class="panel-header-left">
+            <span class="eyebrow">FROZEN BENCHMARK AUDIT / N=250</span>
+            <h1 id="eval-title">Offline Golden Set Evaluation</h1>
+            <p class="panel-description">Rigorous deterministic evaluation across the held-out, human-annotated AppleSupport benchmark (Golden Set N=250).</p>
+          </div>
+          <div class="provenance-tag">
+            <span class="provenance-badge">FROZEN OFFLINE AUDIT</span>
+            <span class="provenance-note">Model &amp; pipeline frozen · Zero live data leakage</span>
+          </div>
+        </div>
+
+        <!-- KEY METRICS CARDS -->
+        <div class="metrics-grid" role="region" aria-label="Headline metrics">
+          <div class="metric-card prominent">
+            <div class="metric-eyebrow">SECONDARY ROUTING ACCURACY</div>
+            <div class="metric-value">72.00%</div>
+            <div class="metric-subtext"><strong>180 / 250</strong> binary action matches</div>
+            <div class="metric-context-alert">⚠️ Deceptive on paper: matches Always-Escalate baseline (180/250)</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-eyebrow">CRITICAL HAZARD RECALL</div>
+            <div class="metric-value">100.0%</div>
+            <div class="metric-subtext"><strong>10 / 10</strong> critical hazards escalated</div>
+            <div class="metric-note">Zero swelling batteries, sparks, or account breaches missed</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-eyebrow">UNDER-ESCALATION RATE</div>
+            <div class="metric-value danger">4.44%</div>
+            <div class="metric-subtext"><strong>8 / 180</strong> Gold ESCALATE auto-handled</div>
+            <div class="metric-note">Dangerous self-service on complex/urgent inquiries</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-eyebrow">GOLD AUTO WITHHELD</div>
+            <div class="metric-value warning">88.57%</div>
+            <div class="metric-subtext"><strong>62 / 70</strong> Gold AUTO withheld from automation</div>
+            <div class="metric-note">38 diverted to clarification, 24 diverted to escalation</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-eyebrow">OPERATIONAL 3-WAY ROUTING</div>
+            <div class="metric-value">16 / 126 / 108</div>
+            <div class="metric-subtext">Auto: <strong>6.4%</strong> · Ask: <strong>50.4%</strong> · Esc: <strong>43.2%</strong></div>
+            <div class="metric-note">Ultra-selective self-service; heavy diagnostic withholding</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-eyebrow">INTENT DIAGNOSTIC ACCURACY</div>
+            <div class="metric-value">51.20% / 48.00%</div>
+            <div class="metric-subtext">Full set: <strong>128/250</strong> · Specific: <strong>108/225</strong></div>
+            <div class="metric-note">Confidence threshold &tau;=0.25 abstains 67 low-confidence queries</div>
+          </div>
+        </div>
+
+        <!-- MANDATORY DECONSTRUCTION: What is misleading about my headline number? -->
+        <div class="deconstruction-section" role="region" aria-labelledby="decon-title">
+          <div class="section-heading">
+            <span class="eyebrow">CRITICAL EVALUATOR CONTEXT</span>
+            <h2 id="decon-title">What is misleading about the 72% headline number?</h2>
+            <span class="quiet">Why 72% binary accuracy conceals extreme automation withholding and residual safety risks</span>
+          </div>
+
+          <div class="deconstruction-grid">
+            <!-- 01: Baseline Parity -->
+            <div class="decon-card">
+              <div class="decon-badge">01 / BASELINE MATCHING BIAS</div>
+              <h3>Accidental parity with trivial Always-Escalate</h3>
+              <p>In the Golden Set, 180 of 250 queries (72.0%) are Gold ESCALATE. A brainless "Always-Escalate" dummy model that forwards 100% of tickets to human agents achieves <strong>exactly 72.00% binary accuracy</strong> without reading a single word. Our 72% headline reflects safe conservatism, not intelligent deflection.</p>
+              <div class="decon-bar-container">
+                <div class="decon-bar-label">
+                  <span>Golden Ground Truth Balance ($N=250$)</span>
+                  <span>72% ESCALATE vs 28% AUTO</span>
+                </div>
+                <div class="decon-visual-bar" aria-label="72% Gold Escalate, 28% Gold Auto">
+                  <span class="bar-segment bar-esc" style="width: 72%;">180 Gold ESCALATE (72.0%)</span>
+                  <span class="bar-segment bar-auto" style="width: 28%;">70 Gold AUTO (28.0%)</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 02: Automatable Withholding -->
+            <div class="decon-card">
+              <div class="decon-badge">02 / AUTOMATION STARVATION</div>
+              <h3>Only 8 of 70 automatable queries resolved</h3>
+              <p>Of 70 verified self-service queries, the system automated <strong>only 8 (11.43% yield)</strong>. It withheld <strong>62 out of 70 (88.57%)</strong>: 38 diverted to clarification, 24 escalated. In production, an agent that fails to resolve 88.6% of automatable tickets fails its primary business objective.</p>
+              <div class="decon-bar-container">
+                <div class="decon-bar-label">
+                  <span>Disposition of 70 Gold AUTO Inquiries</span>
+                  <span>Only 8 Automated (11.4%)</span>
+                </div>
+                <div class="decon-visual-bar" aria-label="8 Auto-handled, 38 Clarified, 24 Escalated">
+                  <span class="bar-segment bar-auto-success" style="width: 11.4%;">8 Auto (11.4%)</span>
+                  <span class="bar-segment bar-clarify" style="width: 54.3%;">38 Ask Clarify (54.3%)</span>
+                  <span class="bar-segment bar-escalate-divert" style="width: 34.3%;">24 Escalate (34.3%)</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 03: Under-escalation Residual Risk -->
+            <div class="decon-card">
+              <div class="decon-badge">03 / RESIDUAL SAFETY DEFICIT</div>
+              <h3>4.44% under-escalation on high-risk cases</h3>
+              <p>While 172/180 (95.56%) of escalation cases were safely diverted from automation, <strong>8 cases were under-escalated</strong> into auto-handling. These included urgent shipping address modifications where chat was offline, 2FA credential alterations, and persistent crash loops.</p>
+              <div class="decon-bar-container">
+                <div class="decon-bar-label">
+                  <span>Disposition of 180 Gold ESCALATE Inquiries</span>
+                  <span>8 Dangerous Misses (4.44%)</span>
+                </div>
+                <div class="decon-visual-bar" aria-label="108 Escalated, 64 Clarified, 8 Under-escalated">
+                  <span class="bar-segment bar-esc-direct" style="width: 60.0%;">108 Direct Escalate (60.0%)</span>
+                  <span class="bar-segment bar-clarify-safe" style="width: 35.6%;">64 Clarify / Safe (35.6%)</span>
+                  <span class="bar-segment bar-under-esc" style="width: 4.4%;">8 Under-Escalate (4.4%)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- EXECUTION TRACES & POPULATION TABLE -->
+        <div class="table-section">
+          <div class="section-heading">
+            <span class="eyebrow">AUDITED OPERATIONAL INVARIANTS</span>
+            <h2>Pipeline Execution &amp; Triage Statistics</h2>
+          </div>
+          <table class="audit-table">
+            <thead>
+              <tr>
+                <th scope="col">Execution Dimension</th>
+                <th scope="col">Frozen Value</th>
+                <th scope="col">Benchmark Interpretation &amp; Invariants</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Generated Reply Population</strong></td>
+                <td><code>142</code> replies</td>
+                <td>16 <code>AUTO_HANDLE</code> + 126 <code>ASK_CLARIFICATION</code> (Historical 135 figure was prior snapshot)</td>
+              </tr>
+              <tr>
+                <td><strong>No-Generation Short-Circuits</strong></td>
+                <td><code>108</code> cases</td>
+                <td>7 Pre-Retrieval Critical Hazards + 101 Escalation Policy Boundary short-circuits</td>
+              </tr>
+              <tr>
+                <td><strong>Evidence URL Citation Rate</strong></td>
+                <td><code>40.85%</code> (58 / 142)</td>
+                <td>Replies containing verified verbatim URLs extracted from retrieved training evidence</td>
+              </tr>
+              <tr>
+                <td><strong>Routing Macro-F1</strong></td>
+                <td><code>50.85%</code></td>
+                <td>Class-imbalance penalized F1 (Escalate F1: 83.09%, Auto F1: 18.60%)</td>
+              </tr>
+              <tr>
+                <td><strong>High-Confidence Intent Accuracy</strong></td>
+                <td><code>81.48%</code> (66 / 81)</td>
+                <td>Precision when classifier confidence &ge; 0.80 (32.4% of total Golden volume)</td>
+              </tr>
+              <tr>
+                <td><strong>Retrieval Similarity Dynamics</strong></td>
+                <td><code>0.3983 &rarr; 0.3997</code></td>
+                <td>15.60% (39/250) retried; 3.88% (4/103) borderline cases upgraded to sufficient</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- COMPACT PROVENANCE AREA -->
+        <div class="provenance-area">
+          <div class="section-heading">
+            <span class="eyebrow">AUDIT PROVENANCE &amp; ADJUDICATION STATUS</span>
+            <h2>Evaluation Dataset &amp; LLM Judge Boundaries</h2>
+          </div>
+          <div class="provenance-grid">
+            <div class="prov-box">
+              <span class="prov-title">Frozen Golden Set</span>
+              <strong>250 Cases</strong>
+              <p>Manually curated &amp; verified. Strictly excluded from all training splits, silver labeling, and retrieval corpus indexing.</p>
+            </div>
+            <div class="prov-box">
+              <span class="prov-title">Gemini Judge Status</span>
+              <strong class="tag-partial">PARTIAL AUDIT (39 / 142)</strong>
+              <p>39 successful records (mean 3.14/5.00: Groundedness 2.28, Correctness 3.46, Relevance 3.00, Helpfulness 2.90, Tone 4.08). 7 API errors. <strong>Coverage is partial, not complete.</strong></p>
+            </div>
+            <div class="prov-box">
+              <span class="prov-title">Human Rating Cohort</span>
+              <strong>23 Ratings Collected</strong>
+              <p>23 independent ratings intentionally collected via <code>scripts/rate_human_agreement.py</code> over the stratified audit sample.</p>
+            </div>
+            <div class="prov-box">
+              <span class="prov-title">Judge-Human Overlap</span>
+              <strong>Clean Overlap N=9</strong>
+              <p>Clean intersection of 23 human ratings &amp; 39 successful Gemini judgments yields N=9 (candidate 0066 excluded as contaminated). Formal calibration deferred.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- VIEW 3: FAILURE LAB -->
+    <div id="panel-failure-lab" role="tabpanel" aria-labelledby="tab-failure-lab" class="tab-panel" hidden>
+      <section class="failure-view" aria-labelledby="failure-title">
+        <div class="panel-header">
+          <div class="panel-header-left">
+            <span class="eyebrow">EMPIRICAL ERROR ANALYSIS / 5 MODES</span>
+            <h1 id="failure-title">Failure Lab: Exactly Five Verified Failure Modes</h1>
+            <p class="panel-description">Systematic failure taxonomy derived from the frozen 250-example Golden Set evaluation (<code>reports/failure_analysis.md</code>).</p>
+          </div>
+        </div>
+
+        <div class="failure-modes-container">
+          <!-- MODE 1 -->
+          <article class="failure-card">
+            <div class="failure-card-header">
+              <div class="failure-tag critical">MODE 01 / CRITICAL SAFETY &amp; SECURITY</div>
+              <h2>Under-Escalation on High-Risk / Complex Inquiries</h2>
+              <span class="failure-stat"><strong>8 / 180</strong> Gold ESCALATE cases under-escalated (4.44% error rate)</span>
+            </div>
+            <div class="failure-body">
+              <div class="failure-impact">
+                <strong>Concise Impact:</strong> False self-service guidance promises automated resolution for issues where online tools have already failed, 2FA credentials require alteration, or persistent hardware crash loops require warranty service.
+              </div>
+              <div class="golden-examples">
+                <span class="example-label">Representative Real Golden Cases:</span>
+                <div class="example-row">
+                  <span class="golden-id">golden_candidate_0035</span>
+                  <p><em>"order may be ineligible for changes online and chat is unavailable"</em> &rarr; Predicted <code>orders_delivery</code> (conf 0.909), auto-handled with generic link when chat was offline.</p>
+                </div>
+                <div class="example-row">
+                  <span class="golden-id">golden_candidate_0132</span>
+                  <p><em>"Your two factor authentication is awful... turning it off is impossible!"</em> &rarr; Predicted <code>apple_id_account</code> (conf 0.636), auto-handled instead of enforcing account security boundary.</p>
+                </div>
+                <div class="example-row">
+                  <span class="golden-id">golden_candidate_0062</span>
+                  <p><em>"phone is still restarting every 30 seconds"</em> &rarr; Predicted <code>software_update</code> (conf 0.863), auto-handled despite persistent crash loop.</p>
+                </div>
+              </div>
+              <div class="fact-vs-hypo">
+                <div class="fact-box"><strong>MEASURED FACT:</strong> Exactly 8 Gold ESCALATE were auto-handled. Zero critical safety keywords fired on these cases.</div>
+                <div class="hypo-box"><strong>HYPOTHESIS:</strong> Threshold gating permits AUTO_HANDLE when confidence &ge; 0.50 and similarity &ge; 0.35, blind to user statements of tool failure.</div>
+              </div>
+              <div class="mitigation-box">
+                <span class="future-tag">FUTURE WORK</span>
+                <strong>One-Week Mitigation:</strong> Negative-intent regex guards for prior failure (<em>"already tried"</em>, <em>"ineligible.*online"</em>, <em>"chat.*unavailable"</em>); mandatory human routing on 2FA disabling; customer confirmation before auto-resolving hardware reboots.
+              </div>
+            </div>
+          </article>
+
+          <!-- MODE 2 -->
+          <article class="failure-card">
+            <div class="failure-card-header">
+              <div class="failure-tag high">MODE 02 / AUTOMATION STARVATION</div>
+              <h2>Excessive Withholding &amp; False Escalation of Automatable Queries</h2>
+              <span class="failure-stat"><strong>62 / 70</strong> Gold AUTO withheld (88.57% false escalation rate)</span>
+            </div>
+            <div class="failure-body">
+              <div class="failure-impact">
+                <strong>Concise Impact:</strong> Severe self-service starvation; the agent resolves only 8 of 70 valid automatable cases, diverting 38 to clarification and 24 to human escalation. Total deflection is depressed to 6.4%.
+              </div>
+              <div class="golden-examples">
+                <span class="example-label">Representative Real Golden Cases:</span>
+                <div class="example-row">
+                  <span class="golden-id">golden_candidate_0006</span>
+                  <p><em>"How to change my personal name associated with my apple ID?"</em> &rarr; Confidence 0.968, similarity 0.384; escalated solely because evidence lacked an extracted link.</p>
+                </div>
+                <div class="example-row">
+                  <span class="golden-id">golden_candidate_0015</span>
+                  <p><em>"whether intermittent charging is better for battery than full charge"</em> &rarr; Confidence 0.795; escalated because lexical similarity was 0.271 (&lt; 0.35 cutoff).</p>
+                </div>
+                <div class="example-row">
+                  <span class="golden-id">golden_candidate_0026</span>
+                  <p><em>"says searching and occasionally no service"</em> &rarr; Standard cellular self-service troubleshooting escalated due to similarity 0.330 (&lt; 0.35).</p>
+                </div>
+              </div>
+              <div class="fact-vs-hypo">
+                <div class="fact-box"><strong>MEASURED FACT:</strong> 62 of 70 automatable queries were withheld; 100% of these 62 lacked either a verified URL or &ge; 0.35 cosine similarity.</div>
+                <div class="hypo-box"><strong>HYPOTHESIS:</strong> Rigid conjunction of requiring an extracted URL + 0.35 lexical cutoff suppresses valid, high-confidence guidance.</div>
+              </div>
+              <div class="mitigation-box">
+                <span class="future-tag">FUTURE WORK</span>
+                <strong>One-Week Mitigation:</strong> Allow text-only grounded replies when confidence &ge; 0.80 and similarity &ge; 0.30 without requiring an external link; lower similarity threshold to 0.30 for informational intents (<code>battery_power</code>, <code>how_to_information</code>).
+              </div>
+            </div>
+          </article>
+
+          <!-- MODE 3 -->
+          <article class="failure-card">
+            <div class="failure-card-header">
+              <div class="failure-tag high">MODE 03 / CUSTOMER FRICTION</div>
+              <h2>Monolithic Clarification Loop &amp; Premature Triage Trap</h2>
+              <span class="failure-stat"><strong>126 / 142</strong> generated replies (88.73%) used static canned templates</span>
+            </div>
+            <div class="failure-body">
+              <div class="failure-impact">
+                <strong>Concise Impact:</strong> High customer dialogue friction; 88.7% of all generated responses are identical unparameterized mobile triage prompts asking for device model and iOS version already stated by the user.
+              </div>
+              <div class="golden-examples">
+                <span class="example-label">Representative Real Golden Cases:</span>
+                <div class="example-row">
+                  <span class="golden-id">golden_candidate_0191</span>
+                  <p><em>"Will not take CC credentials on an iPhone 6s"</em> &rarr; Agent blindly asks for device model already explicitly stated.</p>
+                </div>
+                <div class="example-row">
+                  <span class="golden-id">golden_candidate_0001</span>
+                  <p><em>"When trying to install free apps on an iPhone 6s..."</em> &rarr; Agent asks for device model already provided in opening sentence.</p>
+                </div>
+                <div class="example-row">
+                  <span class="golden-id">golden_candidate_0025</span>
+                  <p><em>"bought my old work computer... was wiped... password hint doesn't work"</em> &rarr; Customer asks about Mac; agent asks for iOS version.</p>
+                </div>
+              </div>
+              <div class="fact-vs-hypo">
+                <div class="fact-box"><strong>MEASURED FACT:</strong> 126 clarification replies used identical templates. In queries naming "iPhone 6s", the template asked for device model.</div>
+                <div class="hypo-box"><strong>HYPOTHESIS:</strong> Offline generator lacks slot/entity extraction before rendering the clarification template.</div>
+              </div>
+              <div class="mitigation-box">
+                <span class="future-tag">FUTURE WORK</span>
+                <strong>One-Week Mitigation:</strong> Regex slot extractors for hardware (iPhone 6s, Mac) and OS (iOS 11, High Sierra); branch templates by platform; omit questions for slots already present in customer message.
+              </div>
+            </div>
+          </article>
+
+          <!-- MODE 4 -->
+          <article class="failure-card">
+            <div class="failure-card-header">
+              <div class="failure-tag high">MODE 04 / GROUNDING FIDELITY</div>
+              <h2>Link Validity Degradation &amp; Ephemeral Twitter DM Shortlinks</h2>
+              <span class="failure-stat"><strong>16 / 16</strong> AUTO replies (100.0%) cite t.co links; 7 cite DM invite; 0 cite Apple KB</span>
+            </div>
+            <div class="failure-body">
+              <div class="failure-impact">
+                <strong>Concise Impact:</strong> Repurposing historical tweet shortlinks promises "find the steps to resolve this here" while actually pointing to ephemeral Twitter DM invitation links rather than canonical Apple support documentation.
+              </div>
+              <div class="golden-examples">
+                <span class="example-label">Representative Real Golden Cases:</span>
+                <div class="example-row">
+                  <span class="golden-id">golden_candidate_0066</span>
+                  <p><em>"trying to run update from App Store"</em> &rarr; Auto-handled citing <code>https://t.co/GDrqU22YpT</code> (a Twitter DM invite link).</p>
+                </div>
+                <div class="example-row">
+                  <span class="golden-id">golden_candidate_0039</span>
+                  <p><em>"on my iPhone 'is' keeps autocorrecting to I.S"</em> &rarr; Autocorrect bug paired with historical DM invitation shortlink.</p>
+                </div>
+                <div class="example-row">
+                  <span class="golden-id">golden_candidate_0193</span>
+                  <p><em>"The battery drain is real @115858 #ios11"</em> &rarr; Auto-handled citing raw <code>t.co</code> link from historical tweet.</p>
+                </div>
+              </div>
+              <div class="fact-vs-hypo">
+                <div class="fact-box"><strong>MEASURED FACT:</strong> 100% of AUTO replies cite <code>t.co</code> shortlinks; 43.75% cite DM links; 0% cite <code>support.apple.com</code>.</div>
+                <div class="hypo-box"><strong>HYPOTHESIS:</strong> TF-IDF retrieval matches brand tokens rather than resolution text; URL guard checks verbatim presence in evidence without domain whitelisting.</div>
+              </div>
+              <div class="mitigation-box">
+                <span class="future-tag">FUTURE WORK</span>
+                <strong>One-Week Mitigation:</strong> Enforce strict domain whitelisting (permitting only <code>support.apple.com</code>, <code>appleid.apple.com</code>); reject or strip <code>t.co</code> DM links; index curated official Knowledge Base articles.
+              </div>
+            </div>
+          </article>
+
+          <!-- MODE 5 -->
+          <article class="failure-card">
+            <div class="failure-card-header">
+              <div class="failure-tag medium">MODE 05 / CONTEXT BOUNDARY DEFICIT</div>
+              <h2>Conversational Anaphora &amp; Context Boundary Deficit</h2>
+              <span class="failure-stat"><strong>250 / 250</strong> in threads &gt;1 turn; 96 have prior context; 29 anaphoric errors resolvable</span>
+            </div>
+            <div class="failure-body">
+              <div class="failure-impact">
+                <strong>Concise Impact:</strong> Inbound turns evaluated in isolation cannot resolve pronouns (*"it"*, *"this"*, *"still"*) referring to antecedent turns, causing classifier uncertainty and unnecessary abstention to <code>other_unclear</code>.
+              </div>
+              <div class="golden-examples">
+                <span class="example-label">Representative Real Golden Cases:</span>
+                <div class="example-row">
+                  <span class="golden-id">golden_candidate_0017</span>
+                  <p><em>"it asks for a user and a passwort... why did it appear all of a sudden?"</em> &rarr; Turn 1 established unauthorized new user login screen after Mac update.</p>
+                </div>
+                <div class="example-row">
+                  <span class="golden-id">golden_candidate_0034</span>
+                  <p><em>"Took maybe an hour to recover all photos... stop it happening"</em> &rarr; Turn 1 established customer was discussing iCloud photo recovery.</p>
+                </div>
+                <div class="example-row">
+                  <span class="golden-id">golden_candidate_0059</span>
+                  <p><em>"Updated apps reset device still very glitchy"</em> &rarr; Prior turns showed ongoing complaints about persistent UI freezing.</p>
+                </div>
+              </div>
+              <div class="fact-vs-hypo">
+                <div class="fact-box"><strong>MEASURED FACT:</strong> 250/250 threads &gt;1 turn; 96 have prior context; 66/122 intent errors contain anaphoric markers; 29 of those had prior thread context available.</div>
+                <div class="hypo-box"><strong>HYPOTHESIS:</strong> Single-turn inference caused pronoun misclassification. Causal accuracy lift from conversation history is an unmeasured hypothesis until experimentally tested.</div>
+              </div>
+              <div class="mitigation-box">
+                <span class="future-tag">FUTURE WORK</span>
+                <strong>One-Week Mitigation:</strong> Add <code>conversation_history</code> parameter to <code>AgentController</code>; prepend prior turns with turn boundary tokens; experimentally benchmark causal accuracy lift on the 96 multi-turn Golden examples.
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+    </div>
+
+    <footer class="page-footer">
+      <span>HIVER / ENGINEERING PROTOTYPE</span>
+      <details>
+        <summary>System &amp; limitations</summary>
+        <p>Frozen classifier · TF-IDF historical retrieval · deterministic risk and routing policy · existing offline template generator. Confidence is not a calibrated probability. URL verification does not prove semantic correctness. No messages are sent to customers. The API returns a completed result, not live stage events.</p>
+      </details>
+      <span>Evidence before automation.</span>
+    </footer>
+  </main>
+</body>
+</html>

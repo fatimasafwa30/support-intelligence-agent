@@ -45,6 +45,7 @@ class AgentState:
     # 2. Intent Understanding
     predicted_intent: str | None = None
     intent_confidence: float | None = None
+    is_abstained: bool = False
 
     # 3. Evidence Retrieval
     retrieval_attempts: int = 0
@@ -96,6 +97,7 @@ class AgentState:
             "conversation_id": self.conversation_id,
             "predicted_intent": self.predicted_intent,
             "intent_confidence": round(self.intent_confidence, 4) if self.intent_confidence is not None else None,
+            "is_abstained": self.is_abstained,
             "retrieval_attempts": self.retrieval_attempts,
             "retrieved_evidence": [e.to_dict() for e in self.retrieved_evidence],
             "top_similarity_score": round(self.top_similarity_score, 4),

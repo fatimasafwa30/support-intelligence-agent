@@ -312,7 +312,8 @@ class TestBuildSilverDataset(unittest.TestCase):
                 text = rec["text"]
                 self.assertTrue(bool(text and text.strip()), f"Empty text at line {line_idx}")
 
-        self.assertEqual(record_count, 18159, "Mismatch in expected silver retained count.")
+        self.assertEqual(record_count, 18910, "Mismatch in expected silver retained count.")
+
 
 
 if __name__ == "__main__":

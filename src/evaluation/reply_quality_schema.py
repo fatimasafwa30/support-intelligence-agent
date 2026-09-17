@@ -182,6 +182,8 @@ class EvaluationUnit:
     retrieved_evidence: list[dict[str, Any]] = field(default_factory=list)
     generated_reply: dict[str, Any] = field(default_factory=dict)
     conversation_id: str | None = None
+    intent_confidence: float | None = None
+    verified_reply: dict[str, Any] | None = None
 
     def __post_init__(self) -> None:
         """Validate non-empty query and example ID."""
@@ -201,6 +203,8 @@ class EvaluationUnit:
             "retrieved_evidence": [dict(e) for e in self.retrieved_evidence],
             "generated_reply": dict(self.generated_reply),
             "conversation_id": self.conversation_id,
+            "intent_confidence": self.intent_confidence,
+            "verified_reply": dict(self.verified_reply) if self.verified_reply is not None else None,
         }
 
     @classmethod
@@ -218,4 +222,6 @@ class EvaluationUnit:
             retrieved_evidence=list(data.get("retrieved_evidence") or []),
             generated_reply=dict(data.get("generated_reply") or {}),
             conversation_id=str(data["conversation_id"]) if data.get("conversation_id") is not None else None,
+            intent_confidence=float(data["intent_confidence"]) if data.get("intent_confidence") is not None else None,
+            verified_reply=dict(data["verified_reply"]) if data.get("verified_reply") is not None else None,
         )

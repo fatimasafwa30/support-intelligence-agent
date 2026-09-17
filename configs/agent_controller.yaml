@@ -12,6 +12,7 @@ limits:
 
 # Engineering Heuristic Thresholds (treated as heuristic gating, not calibrated probabilities)
 thresholds:
+  abstention_threshold: 0.25              # Calibrated confidence abstention threshold
   intent_confidence_threshold: 0.50       # Minimum classifier confidence for self-service
   retrieval_similarity_threshold: 0.35    # Sufficient evidence cosine similarity threshold
   borderline_retrieval_threshold: 0.25    # Lower bound to trigger query augmentation retry

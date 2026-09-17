@@ -189,11 +189,14 @@ class EscalationEngine:
         conf = intent_confidence if intent_confidence is not None else 0.0
         best_sim = evidence_list[0].similarity_score if evidence_list else 0.0
 
-        is_low_conf = conf < self.intent_confidence_threshold
+        is_unclear_intent = predicted_intent == "other_unclear"
+        is_low_conf = (conf < self.intent_confidence_threshold) or is_unclear_intent
         is_weak_retrieval = (not evidence_list) or (best_sim < self.retrieval_similarity_threshold)
 
         if is_low_conf or is_weak_retrieval:
-            if is_low_conf:
+            if is_unclear_intent:
+                reasons.append("unclear_intent_requires_resolution")
+            if conf < self.intent_confidence_threshold:
                 reasons.append(f"intent_confidence_below_threshold ({conf:.3f} < {self.intent_confidence_threshold})")
             if is_weak_retrieval:
                 reasons.append(f"retrieval_similarity_below_threshold ({best_sim:.3f} < {self.retrieval_similarity_threshold})")

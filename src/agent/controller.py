@@ -58,6 +58,7 @@ class AgentController:
         intent_confidence_threshold: float | None = None,
         retrieval_similarity_threshold: float | None = None,
         borderline_retrieval_threshold: float | None = None,
+        abstention_threshold: float | None = None,
     ) -> None:
         """Initialize controller with injected or lazily loaded frozen components."""
         cfg_path = Path(config_path or DEFAULT_CONFIG_PATH)
@@ -70,6 +71,11 @@ class AgentController:
         # Configuration & Thresholds (treated as heuristic engineering thresholds)
         self.max_attempts = int(max_attempts if max_attempts is not None else limits.get("max_attempts", 2))
         self.max_retrieval_results = int(limits.get("max_retrieval_results", 3))
+        self.abstention_threshold = (
+            float(abstention_threshold) if abstention_threshold is not None
+            else float(thresholds.get("abstention_threshold", 0.25))
+            if thresholds.get("abstention_threshold") is not None else None
+        )
         self.intent_confidence_threshold = float(
             intent_confidence_threshold if intent_confidence_threshold is not None
             else thresholds.get("intent_confidence_threshold", 0.50)
@@ -110,8 +116,15 @@ class AgentController:
         """Lazily load the frozen classifier artifact if not injected."""
         if not self._classifier_loaded:
             if DEFAULT_CLASSIFIER_PATH.exists():
-                artifact = joblib.load(DEFAULT_CLASSIFIER_PATH)
-                self.classifier = artifact["pipeline"]
+                try:
+                    from src.intents.classifier import IntentClassifier
+                    clf = IntentClassifier.load(DEFAULT_CLASSIFIER_PATH)
+                    if clf.abstention_threshold is None:
+                        clf.abstention_threshold = self.abstention_threshold
+                    self.classifier = clf
+                except Exception:
+                    artifact = joblib.load(DEFAULT_CLASSIFIER_PATH)
+                    self.classifier = artifact.get("pipeline", artifact)
             else:
                 logger.warning("Classifier model artifact not found at %s", DEFAULT_CLASSIFIER_PATH)
                 self.classifier = None
@@ -191,31 +204,52 @@ class AgentController:
     # ──────────────────────────────────────────────────────────────────────────
 
     def _step_understand(self, state: AgentState) -> None:
-        """Classify customer intent and confidence score."""
+        """Classify customer intent and confidence score with calibrated abstention."""
         clf = self._ensure_classifier()
         if clf is not None:
             try:
-                raw_probs = clf.predict_proba([state.customer_message])[0]
-                if hasattr(raw_probs, "argmax"):
-                    best_idx = int(raw_probs.argmax())
+                if hasattr(clf, "predict_one"):
+                    pred = clf.predict_one(
+                        state.customer_message,
+                        abstention_threshold=self.abstention_threshold,
+                    )
+                    state.predicted_intent = pred.intent
+                    state.intent_confidence = pred.confidence
+                    state.is_abstained = pred.is_abstained
                 else:
-                    best_idx = max(range(len(raw_probs)), key=lambda i: raw_probs[i])
-                state.predicted_intent = str(clf.classes_[best_idx])
-                state.intent_confidence = float(raw_probs[best_idx])
+                    raw_probs = clf.predict_proba([state.customer_message])[0]
+                    if hasattr(raw_probs, "argmax"):
+                        best_idx = int(raw_probs.argmax())
+                    else:
+                        best_idx = max(range(len(raw_probs)), key=lambda i: raw_probs[i])
+                    best_intent = str(clf.classes_[best_idx])
+                    best_conf = float(raw_probs[best_idx])
+
+                    if self.abstention_threshold is not None and best_conf < self.abstention_threshold:
+                        state.predicted_intent = "other_unclear"
+                        state.intent_confidence = best_conf
+                        state.is_abstained = True
+                    else:
+                        state.predicted_intent = best_intent
+                        state.intent_confidence = best_conf
+                        state.is_abstained = False
             except Exception as err:
                 logger.warning("Classifier prediction failed: %s", err)
                 state.predicted_intent = "other_unclear"
                 state.intent_confidence = 0.0
+                state.is_abstained = True
         else:
             state.predicted_intent = "other_unclear"
             state.intent_confidence = 0.0
+            state.is_abstained = True
 
         state.record_step(
             step_name="UNDERSTAND",
-            action="CLASSIFIED",
+            action="ABSTAINED" if state.is_abstained else "CLASSIFIED",
             details={
                 "intent": state.predicted_intent,
                 "confidence": round(state.intent_confidence, 4) if state.intent_confidence is not None else None,
+                "is_abstained": state.is_abstained,
             },
         )
 
@@ -469,6 +503,20 @@ class AgentController:
         state.final_action = decision.action
         state.target_queue = decision.routing_target
         state.decision_reasons = list(decision.reasons)
+
+        if decision.action == ACTION_ASK_CLARIFICATION and state.generated_reply:
+            if state.generated_reply.action != ACTION_ASK_CLARIFICATION:
+                from src.agent.grounded_generator import CLARIFICATION_TEMPLATE
+                state.generated_reply = GroundedReply(
+                    reply_text=CLARIFICATION_TEMPLATE,
+                    grounded=False,
+                    used_evidence_ids=[],
+                    used_urls=[],
+                    action=ACTION_ASK_CLARIFICATION,
+                    rationale="Escalation engine mandated customer clarification for vague or uncertain inquiry.",
+                    provider=state.generated_reply.provider,
+                    latency_ms=state.generated_reply.latency_ms,
+                )
 
         state.record_step(
             step_name="FINAL_DECISION",

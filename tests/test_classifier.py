@@ -172,6 +172,92 @@ class TestIntentClassifier(unittest.TestCase):
             )
         self.assertIn("canonical taxonomy", str(ctx2.exception))
 
+    # ── Calibrated Confidence Abstention Regression Tests ─────────────────────
+
+    def test_disabled_abstention_preserves_current_behavior(self) -> None:
+        """Verify default/disabled abstention (None) always returns specific intents."""
+        clf = IntentClassifier(min_df=1, random_state=42, abstention_threshold=None)
+        clf.fit(self.sample_texts, self.sample_labels)
+
+        queries = [
+            "My battery is draining rapidly",
+            "completely random unknown words xyz 123",
+            "",
+        ]
+        for q in queries:
+            res = clf.predict_one(q)
+            self.assertIn(res.intent, SPECIFIC_INTENTS)
+            self.assertNotEqual(res.intent, "other_unclear")
+            self.assertFalse(res.is_abstained)
+
+    def test_high_confidence_prediction_unchanged_with_abstention(self) -> None:
+        """Verify high-confidence predictions retain specific intent when abstention is active."""
+        clf = IntentClassifier(min_df=1, random_state=42, abstention_threshold=0.25)
+        clf.fit(self.sample_texts, self.sample_labels)
+
+        res = clf.predict_one("My battery percentage drops 50% in one hour")
+        self.assertEqual(res.intent, "battery_power")
+        self.assertFalse(res.is_abstained)
+        self.assertGreaterEqual(res.confidence, 0.25)
+
+    def test_low_confidence_prediction_becomes_other_unclear(self) -> None:
+        """Verify low-confidence inputs return other_unclear when below threshold."""
+        clf = IntentClassifier(min_df=1, random_state=42, abstention_threshold=0.50)
+        clf.fit(self.sample_texts, self.sample_labels)
+
+        # Ambiguous query that splits probabilities across classes
+        res_unabstained = clf.predict_one("I need assistance with something weird today", abstention_threshold=None)
+        # Check with threshold higher than confidence
+        higher_threshold = res_unabstained.confidence + 0.05
+        res = clf.predict_one("I need assistance with something weird today", abstention_threshold=higher_threshold)
+
+        self.assertEqual(res.intent, "other_unclear")
+        self.assertTrue(res.is_abstained)
+        self.assertAlmostEqual(res.confidence, res_unabstained.confidence, places=4)
+        # Probabilities dictionary preserved
+        self.assertEqual(set(res.probabilities.keys()), set(clf.classes_))
+
+    def test_threshold_boundary_behavior(self) -> None:
+        """Verify exact boundary behavior: >= threshold retains intent, < threshold abstains."""
+        clf = IntentClassifier(min_df=1, random_state=42)
+        clf.fit(self.sample_texts, self.sample_labels)
+
+        raw = clf.predict_one("Trouble updating my iPhone to the latest software")
+        conf = raw.confidence
+
+        # Exactly at or slightly below confidence -> retained
+        retained = clf.predict_one(
+            "Trouble updating my iPhone to the latest software",
+            abstention_threshold=conf,
+        )
+        self.assertEqual(retained.intent, raw.intent)
+        self.assertFalse(retained.is_abstained)
+
+        # Strictly above confidence -> abstained to other_unclear
+        abstained = clf.predict_one(
+            "Trouble updating my iPhone to the latest software",
+            abstention_threshold=conf + 0.001,
+        )
+        self.assertEqual(abstained.intent, "other_unclear")
+        self.assertTrue(abstained.is_abstained)
+
+    def test_saved_and_loaded_model_preserves_abstention_threshold(self) -> None:
+        """Verify abstention_threshold is persisted and loaded correctly."""
+        clf = IntentClassifier(min_df=1, random_state=42, abstention_threshold=0.25)
+        clf.fit(self.sample_texts, self.sample_labels)
+
+        save_path = self.root / "abstention_model.joblib"
+        clf.save(save_path)
+
+        loaded_clf = IntentClassifier.load(save_path)
+        self.assertEqual(loaded_clf.abstention_threshold, 0.25)
+
+        # Check prediction behavior matches
+        p1 = clf.predict_one("some random text")
+        p2 = loaded_clf.predict_one("some random text")
+        self.assertEqual(p1.intent, p2.intent)
+        self.assertEqual(p1.is_abstained, p2.is_abstained)
+
 
 if __name__ == "__main__":
     unittest.main()

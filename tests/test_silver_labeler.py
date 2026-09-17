@@ -224,20 +224,14 @@ class TestSilverLabeler(unittest.TestCase):
     # software_update.  Only framing that blames the update itself may do so.
 
     def test_hw_sw_collision_upgrading_black_screen(self) -> None:
-        """Regression: 'since upgrading…black screens' — upgrade IS causally framed, so
-        update_as_fault gate fires → software_update (no hw pattern matched).
-        This is an acknowledged golden-set borderline; the gate correctly requires
-        causal framing before assigning software_update.
+        """Regression: 'since upgrading…black screens' — black screen hardware symptom
+        wins over update context -> device_hardware.
         """
         r = self.labeler.label(
             "since upgrading to High Sierra my Mac Pro only shows black screens after power saving"
         )
-        # Causal framing ('since upgrading') passes _pat_update_as_fault gate.
-        # No hardware pattern matches 'black screens after power saving' without a
-        # screen-hardware trigger word (e.g., 'frozen', 'cracked').
-        # Correct rule output is software_update; golden label disagreement is
-        # an annotation edge-case, not a labeler error.
-        self.assertEqual(r["intent"], "software_update")
+        self.assertEqual(r["intent"], "device_hardware")
+
 
     def test_hw_sw_collision_updated_glitchy(self) -> None:
         """Regression: 'Updated apps reset device still very glitchy' is NOT software_update."""
@@ -284,12 +278,12 @@ class TestSilverLabeler(unittest.TestCase):
         self.assertEqual(r["intent"], "battery_power")
 
     def test_update_as_fault_downloaded_still_restarting(self) -> None:
-        """Gate positive: 'downloaded the suggested software update and phone still restarting'."""
+        """Remediation attempt with continuing reboot hardware malfunction -> device_hardware."""
         r = self.labeler.label(
             "I've downloaded the suggested software update and my phone is still restarting sporadically"
         )
-        # has_explicit_update=True (software update) → bypass gate → software_update
-        self.assertEqual(r["intent"], "software_update")
+        self.assertEqual(r["intent"], "device_hardware")
+
 
     def test_update_as_fault_ios_update_causal(self) -> None:
         """Gate positive: 'since updating to iOS 11, Face ID not working' — update framed as fault."""
@@ -493,6 +487,104 @@ class TestSilverLabeler(unittest.TestCase):
         """Connectivity: Bluetooth pairing failure."""
         r = self.labeler.label("My AirPods won't pair with my iPhone via Bluetooth.")
         self.assertEqual(r["intent"], "connectivity")
+
+    # ── Golden Set Alignment & Confusion Pair Regression Tests ────────────────
+
+    # 1. software_update -> battery_power
+    def test_software_update_action_goal_over_battery(self) -> None:
+        """User asking to downgrade/restore OS due to battery drain -> software_update."""
+        r = self.labeler.label(
+            "I want to downgrade back to IOS 10.3.3, I'm already on IOS 11.1.1, it has bad battery and I would like to downgrade back to 10.3.3"
+        )
+        self.assertEqual(r["intent"], "software_update")
+
+    def test_battery_drain_after_update_remains_battery(self) -> None:
+        """Symptom is battery drain after update without downgrade request -> battery_power."""
+        r = self.labeler.label(
+            "Ever since updating to iOS 11 my battery has been draining so fast"
+        )
+        self.assertEqual(r["intent"], "battery_power")
+
+    # 2. device_hardware -> software_update
+    def test_black_screens_after_upgrade_is_hardware(self) -> None:
+        """Screen malfunction (black screens) after upgrade -> device_hardware."""
+        r = self.labeler.label(
+            "since upgrading to High Sierra my Mac Pro only shows black screens after power saving when woken up again. No login screen."
+        )
+        self.assertEqual(r["intent"], "device_hardware")
+
+    def test_phone_restarting_sporadically_is_hardware(self) -> None:
+        """Phone restarting sporadically after suggested update -> device_hardware."""
+        r = self.labeler.label(
+            "I've downloaded the suggested software update and my phone is still restarting sporadically"
+        )
+        self.assertEqual(r["intent"], "device_hardware")
+
+    def test_alarm_zero_volume_is_hardware(self) -> None:
+        """Volume/sound failure with volume rockets doing nothing -> device_hardware."""
+        r = self.labeler.label(
+            "Today is the 3rd time my alarm has had 0 volume on iOS 11. Volume rockets do nothing, have to reboot."
+        )
+        self.assertEqual(r["intent"], "device_hardware")
+
+    # 3. device_hardware -> connectivity
+    def test_pair_of_headphones_remote_not_connectivity(self) -> None:
+        """'pair of headphones' noun phrase does not mean Bluetooth pairing; remote feature broken -> device_hardware."""
+        r = self.labeler.label(
+            "So I have a pair of Sennheiser Momentum in-ear headphones, and since I updated to iOS 11 on my iPhone 6S - NONE of the remote features work on the Momentums."
+        )
+        self.assertEqual(r["intent"], "device_hardware")
+
+    def test_actual_pairing_remains_connectivity(self) -> None:
+        """Genuine Bluetooth pairing request/failure -> connectivity."""
+        r = self.labeler.label(
+            "My bluetooth headphones won't pair with my iPhone"
+        )
+        self.assertEqual(r["intent"], "connectivity")
+
+    # 4. device_hardware -> battery_power
+    def test_autocorrect_typing_glitch_is_hardware(self) -> None:
+        """Typing / autocorrect glitch -> device_hardware."""
+        r = self.labeler.label(
+            "on my iPhone 'is' keeps autocorrecting to I.S - I've factory reset the phone but issue persists"
+        )
+        self.assertEqual(r["intent"], "device_hardware")
+
+    def test_scroll_jumping_is_hardware(self) -> None:
+        """Screen scrolling jumping back to top -> device_hardware."""
+        r = self.labeler.label(
+            "why when I scroll down on my Instagram and Facebook on my iPhone X does it shoot back to the top on its own? Is it a setting?"
+        )
+        self.assertEqual(r["intent"], "device_hardware")
+
+    def test_typing_letter_i_bug_is_hardware(self) -> None:
+        """Typing letter I glitch -> device_hardware."""
+        r = self.labeler.label(
+            "what the fuck is up with with iPhones and trying to type I?"
+        )
+        self.assertEqual(r["intent"], "device_hardware")
+
+    # 5. repair_service -> battery_power
+    def test_apple_care_charger_dispute_is_repair(self) -> None:
+        """Mentioning Apple Care coverage/dispute -> repair_service."""
+        r = self.labeler.label(
+            "let down about my laptop charger even though I have Apple care"
+        )
+        self.assertEqual(r["intent"], "repair_service")
+
+    def test_got_phone_fixed_at_apple_store_is_repair(self) -> None:
+        """Prior repair service dispute at Apple Store -> repair_service."""
+        r = self.labeler.label(
+            "i got my phone fixed today at an apple store and now it won't even turn on???"
+        )
+        self.assertEqual(r["intent"], "repair_service")
+
+    def test_need_new_phone_replacement_is_repair(self) -> None:
+        """Customer requesting new phone/replacement because device doesn't work -> repair_service."""
+        r = self.labeler.label(
+            "trying to do factory reset and it will power itself down and restart mode. i just need a new iPhone, this one obvi doesn't work."
+        )
+        self.assertEqual(r["intent"], "repair_service")
 
 
 if __name__ == "__main__":
